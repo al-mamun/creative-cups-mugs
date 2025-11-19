@@ -6,14 +6,15 @@ Quick reference for deploying the Creative Cups & Mugs Shopify theme.
 
 ### One-Line Deploy Command
 ```bash
-cd "f:\wamp64\www\shopify\creative-cups-mugs" && shopify theme push --only sections/custom-designer.liquid sections/featured-collections.liquid layout/theme.liquid templates/page.wishlist.liquid assets/header.css assets/shop.css assets/custom.css assets/custom.js assets/homepage.css assets/main.js --theme 181888418090 --nodelete
+shopify theme push --only sections/custom-designer.liquid sections/featured-collections.liquid layout/theme.liquid templates/page.wishlist.liquid assets/header.css assets/shop.css assets/custom.css assets/custom.js assets/homepage.css assets/main.js --nodelete
 ```
 
 ### Full Theme Deploy
 ```bash
-cd "f:\wamp64\www\shopify\creative-cups-mugs"
-shopify theme push --theme 181888418090
+shopify theme push
 ```
+
+> **Note**: The `shopify theme push` command will automatically detect and deploy to your connected theme. No need to specify theme ID.
 
 ## 📋 Prerequisites
 
@@ -36,18 +37,17 @@ shopify theme push --theme 181888418090
 
 ### Step 1: Test Locally
 ```bash
-cd "f:\wamp64\www\shopify\creative-cups-mugs"
 shopify theme dev
 ```
 
 ### Step 2: Deploy Specific Files
 ```bash
-shopify theme push --only assets/custom.css --theme 181888418090
+shopify theme push --only assets/custom.css
 ```
 
 ### Step 3: Deploy Full Theme
 ```bash
-shopify theme push --theme 181888418090 --nodelete
+shopify theme push --nodelete
 ```
 
 ### Step 4: Verify Deployment
@@ -56,13 +56,16 @@ shopify theme push --theme 181888418090 --nodelete
 3. Check custom designer functionality
 4. Verify all 60 fixes are working
 
-## 🔧 Theme ID
+## 🔧 Theme Management
 
-**Production Theme**: `181888418090`
-
-To get your theme ID:
+To list all themes and their IDs:
 ```bash
 shopify theme list
+```
+
+To deploy to a specific theme:
+```bash
+shopify theme push --theme YOUR_THEME_ID
 ```
 
 ## 📦 Key Files for Deployment
@@ -136,7 +139,7 @@ git commit -m "Your changes"
 git push origin main
 
 # 3. Deploy to Shopify
-shopify theme push --theme 181888418090
+shopify theme push
 ```
 
 ### Feature Branch Workflow
@@ -159,7 +162,7 @@ git checkout main
 git merge feature/new-feature
 
 # 6. Deploy to production
-shopify theme push --theme 181888418090
+shopify theme push
 ```
 
 ## 📊 60 Fixes Deployed
