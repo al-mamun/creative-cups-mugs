@@ -1,0 +1,37 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "collection_header": {
+      "type": "collection-header",
+      "settings": {
+        "show_collection_title": true,
+        "custom_title": "",
+        "show_collection_description": true,
+        "custom_description": "Discover premium home décor and lifestyle essentials"
+      }
+    },
+    "collection_products": {
+      "type": "collection-products",
+      "settings": {
+        "products_per_page": 12,
+        "sort_label": "Sort By",
+        "products_label": "Products",
+        "empty_message": "No products found in this collection.",
+        "prev_label": "Previous",
+        "next_label": "Next"
+      }
+    }
+  },
+  "order": [
+    "collection_header",
+    "collection_products"
+  ]
+}

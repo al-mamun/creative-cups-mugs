@@ -1,0 +1,43 @@
+{% comment %}
+  Custom Designer Hero Section
+  Displays the title and subtitle for the custom designer page
+{% endcomment %}
+
+<section class="custom-hero">
+  <div class="container">
+    <div class="custom-hero__content">
+      {% if section.settings.hero_title != blank %}
+        <h1 class="custom-hero__title">{{ section.settings.hero_title }}</h1>
+      {% endif %}
+
+      {% if section.settings.hero_subtitle != blank %}
+        <p class="custom-hero__subtitle">{{ section.settings.hero_subtitle }}</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Designer Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Hero Title",
+      "default": "Create / Design Your Cup"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Hero Subtitle",
+      "default": "Follow our easy 4-step process to create your perfect custom cup"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Designer Hero"
+    }
+  ]
+}
+{% endschema %}

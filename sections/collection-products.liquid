@@ -1,0 +1,309 @@
+{% comment %}
+  Collection Products Section
+  Displays the products grid with filters and sorting
+{% endcomment %}
+
+<section class="shop-section">
+  <div class="container">
+    <!-- Filters Toolbar -->
+    <div class="collection-toolbar">
+      <!-- Left: Sort By -->
+      <div class="toolbar-left">
+        <div class="sort-dropdown">
+          <label for="sort-filter">{{ section.settings.sort_label | default: 'Sort By' }}</label>
+          <select id="sort-filter" class="sort-select" onchange="window.location.href = this.value">
+            <option value="{{ collection.url }}?sort_by=manual" {% if collection.sort_by == 'manual' %}selected{% endif %}>Featured</option>
+            <option value="{{ collection.url }}?sort_by=price-ascending" {% if collection.sort_by == 'price-ascending' %}selected{% endif %}>Price: Low to High</option>
+            <option value="{{ collection.url }}?sort_by=price-descending" {% if collection.sort_by == 'price-descending' %}selected{% endif %}>Price: High to Low</option>
+            <option value="{{ collection.url }}?sort_by=best-selling" {% if collection.sort_by == 'best-selling' %}selected{% endif %}>Best Selling</option>
+            <option value="{{ collection.url }}?sort_by=created-descending" {% if collection.sort_by == 'created-descending' %}selected{% endif %}>Newest</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Right: Filters & Product Count -->
+      <div class="toolbar-right">
+        <span class="product-count">
+          {{ collection.all_products_count }}
+          {% if section.settings.products_label != blank %}
+            {{ section.settings.products_label }}
+          {% else %}
+            Products
+          {% endif %}
+        </span>
+        <button class="filter-toggle" id="filterToggle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="4" y1="6" x2="20" y2="6"></line>
+            <line x1="4" y1="12" x2="20" y2="12"></line>
+            <line x1="4" y1="18" x2="20" y2="18"></line>
+          </svg>
+          <span>Filters</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Overlay -->
+    <div class="filter-overlay" id="filterOverlay"></div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel" id="filterPanel">
+      <div class="filter-panel__header">
+        <h3>Filter Products</h3>
+        <button class="filter-panel__close" id="filterClose">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="filter-panel__content">
+        {% comment %} Price Range Filter {% endcomment %}
+        <div class="filter-group">
+          <h4 class="filter-group__title">Price Range</h4>
+          <div class="filter-options">
+            <label class="filter-option">
+              <input type="checkbox" name="price" value="0-25">
+              <span>Under $25</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" name="price" value="25-50">
+              <span>$25 - $50</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" name="price" value="50-100">
+              <span>$50 - $100</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" name="price" value="100-plus">
+              <span>$100+</span>
+            </label>
+          </div>
+        </div>
+
+        {% comment %} Availability Filter {% endcomment %}
+        <div class="filter-group">
+          <h4 class="filter-group__title">Availability</h4>
+          <div class="filter-options">
+            <label class="filter-option">
+              <input type="checkbox" name="availability" value="in-stock">
+              <span>In Stock</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" name="availability" value="on-sale">
+              <span>On Sale</span>
+            </label>
+          </div>
+        </div>
+
+        {% comment %} Product Type Filter (if collection has tags) {% endcomment %}
+        {% if collection.all_tags.size > 0 %}
+        <div class="filter-group">
+          <h4 class="filter-group__title">Product Type</h4>
+          <div class="filter-options">
+            {% for tag in collection.all_tags limit: 8 %}
+              <label class="filter-option">
+                <input type="checkbox" name="tag" value="{{ tag | handle }}">
+                <span>{{ tag }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="filter-actions">
+          <button class="btn-clear-filters" id="clearFilters">Clear All</button>
+          <button class="btn-apply-filters" id="applyFilters">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="products-grid" id="products-grid">
+      {% paginate collection.products by section.settings.products_per_page %}
+        {% for product in collection.products %}
+          {% render 'product-card', product: product %}
+        {% else %}
+          <div class="empty-collection">
+            <p>{{ section.settings.empty_message | default: 'No products found in this collection.' }}</p>
+          </div>
+        {% endfor %}
+
+        <!-- Pagination -->
+        {% if paginate.pages > 1 %}
+          <div class="pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="pagination__link">
+                {{ section.settings.prev_label | default: 'Previous' }}
+              </a>
+            {% endif %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                <a href="{{ part.url }}" class="pagination__link">{{ part.title }}</a>
+              {% else %}
+                <span class="pagination__link pagination__link--current">{{ part.title }}</span>
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="pagination__link">
+                {{ section.settings.next_label | default: 'Next' }}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endpaginate %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Products",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product Grid"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per page",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "text",
+      "id": "sort_label",
+      "label": "Sort By Label",
+      "default": "Sort By"
+    },
+    {
+      "type": "text",
+      "id": "products_label",
+      "label": "Products Label",
+      "default": "Products"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty Collection Message",
+      "default": "No products found in this collection."
+    },
+    {
+      "type": "text",
+      "id": "prev_label",
+      "label": "Previous Page Label",
+      "default": "Previous"
+    },
+    {
+      "type": "text",
+      "id": "next_label",
+      "label": "Next Page Label",
+      "default": "Next"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Products"
+    }
+  ]
+}
+{% endschema %}
+
+<script>
+// Collection Filter Functionality
+(function() {
+  const filterToggle = document.getElementById('filterToggle');
+  const filterPanel = document.getElementById('filterPanel');
+  const filterOverlay = document.getElementById('filterOverlay');
+  const filterClose = document.getElementById('filterClose');
+  const clearFilters = document.getElementById('clearFilters');
+  const applyFilters = document.getElementById('applyFilters');
+
+  // Open filter panel
+  if (filterToggle) {
+    filterToggle.addEventListener('click', function() {
+      filterPanel.classList.add('active');
+      filterOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  // Close filter panel
+  function closeFilters() {
+    filterPanel.classList.remove('active');
+    filterOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  if (filterClose) {
+    filterClose.addEventListener('click', closeFilters);
+  }
+
+  if (filterOverlay) {
+    filterOverlay.addEventListener('click', closeFilters);
+  }
+
+  // Clear all filters
+  if (clearFilters) {
+    clearFilters.addEventListener('click', function() {
+      const checkboxes = filterPanel.querySelectorAll('input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+    });
+  }
+
+  // Apply filters
+  if (applyFilters) {
+    applyFilters.addEventListener('click', function() {
+      const selectedFilters = {
+        price: [],
+        availability: [],
+        tags: []
+      };
+
+      // Collect selected filters
+      const priceFilters = filterPanel.querySelectorAll('input[name="price"]:checked');
+      const availabilityFilters = filterPanel.querySelectorAll('input[name="availability"]:checked');
+      const tagFilters = filterPanel.querySelectorAll('input[name="tag"]:checked');
+
+      priceFilters.forEach(filter => selectedFilters.price.push(filter.value));
+      availabilityFilters.forEach(filter => selectedFilters.availability.push(filter.value));
+      tagFilters.forEach(filter => selectedFilters.tags.push(filter.value));
+
+      // Build URL with filters
+      let url = window.location.pathname;
+      let params = new URLSearchParams(window.location.search);
+
+      // Add tag filters to URL
+      if (selectedFilters.tags.length > 0) {
+        url += '/' + selectedFilters.tags.join('+');
+      }
+
+      // Preserve sort parameter
+      if (params.has('sort_by')) {
+        url += '?sort_by=' + params.get('sort_by');
+      }
+
+      // Navigate to filtered URL
+      window.location.href = url;
+    });
+  }
+
+  // Close on ESC key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && filterPanel.classList.contains('active')) {
+      closeFilters();
+    }
+  });
+})();
+</script>

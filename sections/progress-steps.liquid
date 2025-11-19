@@ -1,0 +1,64 @@
+{% comment %}
+  Progress Steps Section
+  Shows the 4-step progress indicator for the custom designer
+{% endcomment %}
+
+<section class="progress-section">
+  <div class="container">
+    <div class="progress-steps">
+      <div class="progress-step active" data-step="1">
+        <div class="progress-step__circle">1</div>
+        <div class="progress-step__label">{{ section.settings.step1_label }}</div>
+      </div>
+      <div class="progress-step" data-step="2">
+        <div class="progress-step__circle">2</div>
+        <div class="progress-step__label">{{ section.settings.step2_label }}</div>
+      </div>
+      <div class="progress-step" data-step="3">
+        <div class="progress-step__circle">3</div>
+        <div class="progress-step__label">{{ section.settings.step3_label }}</div>
+      </div>
+      <div class="progress-step" data-step="4">
+        <div class="progress-step__circle">4</div>
+        <div class="progress-step__label">{{ section.settings.step4_label }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Progress Steps",
+  "settings": [
+    {
+      "type": "text",
+      "id": "step1_label",
+      "label": "Step 1 Label",
+      "default": "Pick Your Cup"
+    },
+    {
+      "type": "text",
+      "id": "step2_label",
+      "label": "Step 2 Label",
+      "default": "Pick Your Wrap"
+    },
+    {
+      "type": "text",
+      "id": "step3_label",
+      "label": "Step 3 Label",
+      "default": "Style & Colors"
+    },
+    {
+      "type": "text",
+      "id": "step4_label",
+      "label": "Step 4 Label",
+      "default": "TikTok Live"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Progress Steps"
+    }
+  ]
+}
+{% endschema %}

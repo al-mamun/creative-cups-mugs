@@ -1,0 +1,61 @@
+{% comment %}
+  Cart Custom Price Note
+  Displays pricing breakdown for custom cup products
+  Shows merchant the correct total price to charge
+{% endcomment %}
+
+{% if item.properties._Final_Price %}
+  <div class="cart-item__custom-pricing">
+    <p class="cart-item__pricing-note">
+      <strong>⚠️ Custom Product Pricing:</strong>
+    </p>
+    <ul class="cart-item__pricing-breakdown">
+      <li>Base Price: {{ item.properties._Base_Price }}</li>
+      {% if item.properties._Wrap_Total and item.properties._Wrap_Total != '$0.00' %}
+        <li>Wraps: +{{ item.properties._Wrap_Total }}</li>
+      {% endif %}
+      {% if item.properties._Style_Total and item.properties._Style_Total != '$0.00' %}
+        <li>Styles: +{{ item.properties._Style_Total }}</li>
+      {% endif %}
+      <li><strong>Correct Total: {{ item.properties._Final_Price }}</strong></li>
+    </ul>
+    <p class="cart-item__pricing-instruction">
+      <em>Please adjust line item price to {{ item.properties._Final_Price }} before checkout.</em>
+    </p>
+  </div>
+{% endif %}
+
+<style>
+.cart-item__custom-pricing {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.cart-item__pricing-note {
+  margin: 0 0 8px 0;
+  color: #856404;
+  font-size: 14px;
+}
+
+.cart-item__pricing-breakdown {
+  margin: 8px 0;
+  padding-left: 20px;
+  list-style: disc;
+  font-size: 13px;
+  color: #856404;
+}
+
+.cart-item__pricing-breakdown li {
+  margin: 4px 0;
+}
+
+.cart-item__pricing-instruction {
+  margin: 8px 0 0 0;
+  font-size: 12px;
+  color: #856404;
+  font-style: italic;
+}
+</style>

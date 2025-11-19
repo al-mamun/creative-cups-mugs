@@ -1,0 +1,119 @@
+{% comment %}
+  Social Media Section
+{% endcomment %}
+
+<section class="social-section">
+  <div class="container">
+    <h2 class="social-section__title">{{ section.settings.title | default: 'Connect With Us' }}</h2>
+    <p class="social-section__subtitle">
+      {{ section.settings.subtitle | default: 'Follow us on social media for updates, inspiration, and exclusive offers' }}
+    </p>
+    <div class="social-links">
+      {% if section.settings.instagram_url != blank %}
+        <a href="{{ section.settings.instagram_url }}" class="social-link" aria-label="Instagram" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1.5"/>
+          </svg>
+        </a>
+      {% endif %}
+
+      {% if section.settings.facebook_url != blank %}
+        <a href="{{ section.settings.facebook_url }}" class="social-link" aria-label="Facebook" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3Z"/>
+          </svg>
+        </a>
+      {% endif %}
+
+      {% if section.settings.pinterest_url != blank %}
+        <a href="{{ section.settings.pinterest_url }}" class="social-link" aria-label="Pinterest" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10 2C5.58 2 2 5.58 2 10c0 3.54 2.29 6.53 5.47 7.59-.07-.69-.13-1.73.03-2.47l.8-3.39s-.2-.41-.2-.99c0-.93.54-1.62 1.21-1.62.57 0 .85.43.85.94 0 .57-.36 1.43-.55 2.22-.16.67.34 1.21 1 1.21 1.2 0 2.12-1.26 2.12-3.08 0-1.61-1.16-2.74-2.81-2.74-1.92 0-3.04 1.44-3.04 2.93 0 .58.22 1.2.5 1.54.05.07.06.12.04.19l-.18.76c-.03.11-.1.14-.24.08-1.09-.51-1.77-2.1-1.77-3.38 0-2.76 2-5.3 5.76-5.3 3.02 0 5.37 2.15 5.37 5.03 0 3-1.89 5.41-4.52 5.41-.88 0-1.71-.46-1.99-1.01l-.54 2.06c-.2.76-.74 1.72-1.10 2.30A8 8 0 0 0 10 18c4.42 0 8-3.58 8-8s-3.58-8-8-8z"/>
+          </svg>
+        </a>
+      {% endif %}
+
+      {% if section.settings.twitter_url != blank %}
+        <a href="{{ section.settings.twitter_url }}" class="social-link" aria-label="Twitter" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M18 3a9 9 0 0 1-2.59 1.26A4 4 0 0 0 11.5 7v1A9 9 0 0 1 3 4s-3.5 7.5 4 11a10 10 0 0 1-6 2c7.5 4 16 0 16-9.5 0-.23-.02-.46-.07-.69A6 6 0 0 0 18 3z"/>
+          </svg>
+        </a>
+      {% endif %}
+
+      {% if section.settings.youtube_url != blank %}
+        <a href="{{ section.settings.youtube_url }}" class="social-link" aria-label="YouTube" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+            <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="white"/>
+          </svg>
+        </a>
+      {% endif %}
+
+      {% if section.settings.tiktok_url != blank %}
+        <a href="{{ section.settings.tiktok_url }}" class="social-link" aria-label="TikTok" target="_blank" rel="noopener">
+          <svg fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+          </svg>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Social Media Links",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Connect With Us"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Section Subtitle",
+      "default": "Follow us on social media for updates, inspiration, and exclusive offers"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "pinterest_url",
+      "label": "Pinterest URL"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "Twitter URL"
+    },
+    {
+      "type": "url",
+      "id": "youtube_url",
+      "label": "YouTube URL"
+    },
+    {
+      "type": "url",
+      "id": "tiktok_url",
+      "label": "TikTok URL"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Social Media Links"
+    }
+  ]
+}
+{% endschema %}

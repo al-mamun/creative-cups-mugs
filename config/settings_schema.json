@@ -1,0 +1,383 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Creative Cups Designer",
+    "theme_version": "1.0.0",
+    "theme_author": "Shimul",
+    "theme_documentation_url": "https://mamundevstudios.com",
+    "theme_support_url": "https://mamundevstudios.com/support"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Primary Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary Color",
+        "default": "#ffffff",
+        "info": "Main background color"
+      },
+      {
+        "type": "color",
+        "id": "color_accent_emerald",
+        "label": "Accent Color (Emerald)",
+        "default": "#12908E",
+        "info": "Primary accent color for buttons and highlights"
+      },
+      {
+        "type": "color",
+        "id": "color_accent_teal",
+        "label": "Accent Color (Teal)",
+        "default": "#0f766e",
+        "info": "Secondary accent color"
+      },
+      {
+        "type": "color",
+        "id": "color_accent_gold",
+        "label": "Accent Color (Gold)",
+        "default": "#b39855",
+        "info": "Gold accent for premium elements"
+      },
+      {
+        "type": "header",
+        "content": "Text Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_text_primary",
+        "label": "Primary Text",
+        "default": "#1a1a1a",
+        "info": "Main text color"
+      },
+      {
+        "type": "color",
+        "id": "color_text_secondary",
+        "label": "Secondary Text",
+        "default": "#666666",
+        "info": "Secondary text color"
+      },
+      {
+        "type": "color",
+        "id": "color_text_light",
+        "label": "Light Text",
+        "default": "#999999",
+        "info": "Light text for hints and captions"
+      },
+      {
+        "type": "header",
+        "content": "Background Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#ffffff",
+        "info": "Main background color"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Surface",
+        "default": "#f9f9f9",
+        "info": "Card and panel background"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border",
+        "default": "#e0e0e0",
+        "info": "Border and divider color"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Font Families"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading Font",
+        "default": "playfair_display_n4",
+        "info": "Font for headings and titles"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body Font",
+        "default": "inter_n4",
+        "info": "Font for body text"
+      },
+      {
+        "type": "header",
+        "content": "Font Sizes"
+      },
+      {
+        "type": "range",
+        "id": "font_size_base",
+        "label": "Base Font Size",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 16
+      }
+    ]
+  },
+  {
+    "name": "Header",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo Image",
+        "info": "Recommended size: 240x40px"
+      },
+      {
+        "type": "range",
+        "id": "logo_width",
+        "label": "Logo Width",
+        "min": 100,
+        "max": 300,
+        "step": 10,
+        "unit": "px",
+        "default": 240
+      },
+      {
+        "type": "header",
+        "content": "Navigation"
+      },
+      {
+        "type": "link_list",
+        "id": "main_menu",
+        "label": "Main Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_header",
+        "label": "Enable sticky header",
+        "default": true,
+        "info": "Header stays visible when scrolling"
+      },
+      {
+        "type": "header",
+        "content": "Features"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_search",
+        "label": "Enable search",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_wishlist",
+        "label": "Enable wishlist",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "footer_menu",
+        "label": "Footer Menu",
+        "default": "footer"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_payment_icons",
+        "label": "Show payment icons",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "footer_copyright",
+        "label": "Copyright Text",
+        "default": "© 2024 Creative Cups 'n' Mugs. All rights reserved."
+      }
+    ]
+  },
+  {
+    "name": "Custom Cup Designer",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product Settings"
+      },
+      {
+        "type": "product",
+        "id": "custom_cup_product",
+        "label": "Custom Cup Product",
+        "info": "Select the product used for custom cup designer"
+      },
+      {
+        "type": "header",
+        "content": "Pricing"
+      },
+      {
+        "type": "number",
+        "id": "wrap_base_price",
+        "label": "Price per wrap",
+        "default": 5,
+        "info": "Price added for each wrap selected"
+      },
+      {
+        "type": "header",
+        "content": "Style Selection Limits"
+      },
+      {
+        "type": "number",
+        "id": "glitter_max_select",
+        "label": "Glitter max selection",
+        "default": 5,
+        "info": "Maximum glitter styles that can be selected"
+      },
+      {
+        "type": "number",
+        "id": "lava_max_select",
+        "label": "LAVA max selection",
+        "default": 2,
+        "info": "Maximum LAVA styles that can be selected"
+      },
+      {
+        "type": "number",
+        "id": "drink_max_select",
+        "label": "Drink/Milk max selection",
+        "default": 1,
+        "info": "Maximum drink styles that can be selected"
+      },
+      {
+        "type": "number",
+        "id": "honey_max_select",
+        "label": "Honey Drip max selection",
+        "default": 1,
+        "info": "Maximum honey drip styles that can be selected"
+      },
+      {
+        "type": "header",
+        "content": "Features"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_tiktok_live",
+        "label": "Enable TikTok Live option",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_preview_rotation",
+        "label": "Enable cup preview rotation",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_preview_animation",
+        "label": "Enable preview animations",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Product Pages",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_product_reviews",
+        "label": "Enable product reviews",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_social_sharing",
+        "label": "Enable social sharing",
+        "default": true
+      },
+      {
+        "type": "select",
+        "id": "product_image_size",
+        "label": "Product image size",
+        "options": [
+          { "value": "small", "label": "Small" },
+          { "value": "medium", "label": "Medium" },
+          { "value": "large", "label": "Large" }
+        ],
+        "default": "medium"
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart Type",
+        "options": [
+          { "value": "page", "label": "Page" },
+          { "value": "drawer", "label": "Drawer" }
+        ],
+        "default": "page"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cart_notes",
+        "label": "Enable cart notes",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social Links"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter",
+        "label": "Twitter URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube URL"
+      }
+    ]
+  }
+]

@@ -1,0 +1,39 @@
+{% comment %}
+  Contact Hero Section
+{% endcomment %}
+
+{{ 'contact.css' | asset_url | stylesheet_tag }}
+
+<section class="contact-hero">
+  <div class="container">
+    <h1 class="contact-hero__title">{{ section.settings.title | default: 'Get in Touch' }}</h1>
+    <p class="contact-hero__subtitle">
+      {{ section.settings.subtitle | default: "We'd love to hear from you. Send us a message and we'll respond as soon as possible." }}
+    </p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Contact Hero",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Hero Title",
+      "default": "Get in Touch"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Hero Subtitle",
+      "default": "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Hero"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,469 @@
+{%- comment -%}
+  Section: Header
+  Description: Main site header with navigation, search, and cart
+  Settings: Logo, navigation menu, enable/disable features
+{%- endcomment -%}
+
+{%- liquid
+  assign main_menu = section.settings.menu | default: 'main-menu'
+  assign logo = section.settings.logo
+-%}
+
+<header class="header" id="header">
+  <div class="container">
+    <nav class="nav">
+      <!-- Logo -->
+      <div class="nav__logo">
+        <a href="{{ routes.root_url }}" class="logo">
+          {%- if logo != blank -%}
+            <img src="{{ logo | img_url: '240x40' }}"
+                 alt="{{ shop.name }}"
+                 class="logo__image"
+                 width="240"
+                 height="40">
+          {%- else -%}
+            <svg
+              class="logo__svg"
+              width="240"
+              height="40"
+              viewBox="0 0 240 40"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <!-- Coffee cup icon -->
+              <g fill="#12908E">
+                <path
+                  d="M8 12c0-1.1.9-2 2-2h4c1.1 0 2 .9 2 2v8c0 2.2-1.8 4-4 4s-4-1.8-4-4v-8z"
+                />
+                <path d="M16 14h2c1.1 0 2 .9 2 2s-.9 2-2 2h-2v-4z" />
+                <ellipse cx="12" cy="26" rx="6" ry="1" />
+              </g>
+              <!-- Text on one line -->
+              <text
+                x="28"
+                y="24"
+                font-family="Playfair Display, serif"
+                font-size="14"
+                font-weight="700"
+                fill="#12908E"
+              >
+                {{ shop.name | default: "Creative Cups 'n' Mugs" }}
+              </text>
+              <!-- Decorative elements -->
+              <circle cx="225" cy="10" r="2" fill="#b39855" opacity="0.6" />
+              <circle cx="230" cy="18" r="1.5" fill="#12908E" opacity="0.4" />
+              <circle cx="235" cy="26" r="1" fill="#b39855" opacity="0.8" />
+            </svg>
+          {%- endif -%}
+        </a>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <button
+        class="nav__toggle"
+        id="nav-toggle"
+        aria-label="Toggle navigation"
+      >
+        <span class="nav__toggle-line"></span>
+        <span class="nav__toggle-line"></span>
+        <span class="nav__toggle-line"></span>
+      </button>
+
+      <!-- Navigation Menu -->
+      <div class="nav__menu" id="nav-menu">
+        <ul class="nav__list">
+          {%- for link in linklists[main_menu].links -%}
+            <li class="nav__item{% if link.links != blank %} nav__item--has-dropdown{% endif %}">
+              <a href="{{ link.url }}" class="nav__link">
+                {{ link.title }}
+                {%- if link.links != blank -%}
+                  <svg class="nav__arrow" width="12" height="8">
+                    <path
+                      d="M1 1l5 5 5-5"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      fill="none"
+                    />
+                  </svg>
+                {%- endif -%}
+              </a>
+
+              {%- if link.links != blank -%}
+                <!-- Mega Menu -->
+                <div class="mega-menu">
+                  <div class="mega-menu__container">
+                    <div class="mega-menu__grid">
+                      {%- for child_link in link.links -%}
+                        <div class="mega-menu__column">
+                          <h3 class="mega-menu__title">
+                            <a href="{{ child_link.url }}">{{ child_link.title }}</a>
+                          </h3>
+                          {%- if child_link.links != blank -%}
+                            <ul class="mega-menu__list">
+                              {%- for grandchild_link in child_link.links -%}
+                                <li>
+                                  <a href="{{ grandchild_link.url }}" class="mega-menu__link">
+                                    {{ grandchild_link.title }}
+                                  </a>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </div>
+                      {%- endfor -%}
+
+                      {%- comment -%} Featured product in mega menu {%- endcomment -%}
+                      {%- if section.settings.featured_product != blank -%}
+                        {%- assign featured = all_products[section.settings.featured_product] -%}
+                        <div class="mega-menu__column mega-menu__featured">
+                          <h3 class="mega-menu__title">Featured</h3>
+                          <div class="mega-menu__featured-item">
+                            {%- if featured.featured_image -%}
+                              <img
+                                src="{{ featured.featured_image | img_url: '200x120', crop: 'center' }}"
+                                alt="{{ featured.featured_image.alt | escape }}"
+                                class="mega-menu__featured-image"
+                                width="200"
+                                height="120"
+                                loading="lazy"
+                              />
+                            {%- endif -%}
+                            <div class="mega-menu__featured-content">
+                              <h4 class="mega-menu__featured-title">
+                                {{ featured.title }}
+                              </h4>
+                              <p class="mega-menu__featured-text">
+                                {{ featured.price | money }}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <!-- Search & Actions -->
+      <div class="nav__actions">
+        <!-- Search -->
+        {%- if section.settings.enable_search -%}
+          <div class="search-container">
+            <button
+              class="search-toggle"
+              id="search-toggle"
+              aria-label="Toggle search"
+            >
+              <svg width="20" height="20" fill="none" stroke="currentColor">
+                <circle cx="10" cy="10" r="7" />
+                <path d="m17 17-3-3" />
+              </svg>
+            </button>
+            <div class="search-dropdown" id="search-dropdown">
+              <form action="{{ routes.search_url }}" method="get" class="search-form">
+                <input
+                  type="search"
+                  name="q"
+                  class="search-input"
+                  placeholder="Search products..."
+                  autocomplete="off"
+                  id="search-input"
+                  value="{{ search.terms | escape }}"
+                />
+                <button type="submit" class="search-submit">
+                  <svg width="16" height="16" fill="none" stroke="currentColor">
+                    <circle cx="8" cy="8" r="6" />
+                    <path d="m13 13-2.5-2.5" />
+                  </svg>
+                </button>
+              </form>
+              <div class="search-suggestions" id="search-suggestions">
+                <!-- Search suggestions populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+
+        <!-- Account -->
+        <a href="{{ routes.account_url }}" class="nav__action" aria-label="Account">
+          <svg width="20" height="20" fill="none" stroke="currentColor">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </a>
+
+        <!-- Wishlist -->
+        {%- if section.settings.enable_wishlist -%}
+          <a
+            href="{{ pages.wishlist.url | default: '/pages/wishlist' }}"
+            class="nav__action nav__action--wishlist"
+            aria-label="Wishlist"
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+            <span class="nav__badge" id="wishlist-count">0</span>
+          </a>
+        {%- endif -%}
+
+        <!-- Cart -->
+        <div class="cart-container">
+          <button
+            class="nav__action nav__action--cart"
+            id="cart-toggle"
+            aria-label="Shopping cart"
+          >
+            <svg width="20" height="20" fill="none" stroke="currentColor">
+              <path
+                d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"
+              />
+              <circle cx="9" cy="19" r="1" />
+              <circle cx="20" cy="19" r="1" />
+            </svg>
+            <span class="nav__badge" id="cart-count">{{ cart.item_count }}</span>
+          </button>
+
+          <!-- Mini Cart Dropdown -->
+          <div class="mini-cart" id="mini-cart">
+            <div class="mini-cart__header">
+              <h3 class="mini-cart__title">Shopping Cart</h3>
+              <button class="mini-cart__close" id="mini-cart-close">
+                <svg width="16" height="16" fill="none" stroke="currentColor">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            <div class="mini-cart__body" id="mini-cart-items">
+              {%- if cart.item_count > 0 -%}
+                {%- for item in cart.items limit: 3 -%}
+                  <div class="mini-cart__item">
+                    <div class="mini-cart__item-image">
+                      {%- if item.image -%}
+                        <img src="{{ item.image | img_url: '80x80' }}"
+                             alt="{{ item.image.alt | escape }}"
+                             width="80"
+                             height="80"
+                             loading="lazy">
+                      {%- endif -%}
+                    </div>
+                    <div class="mini-cart__item-info">
+                      <h4 class="mini-cart__item-title">{{ item.product.title }}</h4>
+                      <p class="mini-cart__item-price">
+                        {{ item.final_line_price | money }}
+                      </p>
+                      <p class="mini-cart__item-qty">Qty: {{ item.quantity }}</p>
+                    </div>
+                  </div>
+                {%- endfor -%}
+
+                <div class="mini-cart__footer">
+                  <div class="mini-cart__total">
+                    <span>Subtotal:</span>
+                    <span class="mini-cart__total-price">{{ cart.total_price | money }}</span>
+                  </div>
+                  <a href="{{ routes.cart_url }}" class="btn btn-secondary btn-full">
+                    View Cart
+                  </a>
+                  <a href="/checkout" class="btn btn-primary btn-full">
+                    Checkout
+                  </a>
+                </div>
+              {%- else -%}
+                <div class="mini-cart__empty">
+                  <p>Your cart is empty</p>
+                  <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-small">
+                    Continue Shopping
+                  </a>
+                </div>
+              {%- endif -%}
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Mobile Search -->
+  {%- if section.settings.enable_search -%}
+    <div class="mobile-search" id="mobile-search">
+      <div class="container">
+        <form action="{{ routes.search_url }}" method="get" class="mobile-search__form">
+          <input
+            type="search"
+            name="q"
+            class="mobile-search__input"
+            placeholder="Search products..."
+            autocomplete="off"
+            value="{{ search.terms | escape }}"
+          />
+          <button type="submit" class="mobile-search__submit">
+            <svg width="20" height="20" fill="none" stroke="currentColor">
+              <circle cx="10" cy="10" r="7" />
+              <path d="m17 17-3-3" />
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  {%- endif -%}
+</header>
+
+{%- comment -%} Expose cart data to JavaScript {%- endcomment -%}
+<script>
+  window.Shopify = window.Shopify || {};
+  window.Shopify.cart = {{ cart | json }};
+  window.Shopify.routes = {
+    cart: '{{ routes.cart_url }}',
+    cartAdd: '/cart/add.js',
+    cartChange: '/cart/change.js',
+    cartUpdate: '/cart/update.js'
+  };
+
+  // Format money helper
+  function formatMoney(cents) {
+    return '$' + (cents / 100).toFixed(2);
+  }
+
+  // Function to update mini cart display
+  function updateMiniCart() {
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(cart => {
+        const miniCartItems = document.getElementById('mini-cart-items');
+        const cartCount = document.getElementById('cart-count');
+
+        if (cartCount) {
+          cartCount.textContent = cart.item_count;
+        }
+
+        if (!miniCartItems) return;
+
+        if (cart.item_count === 0) {
+          miniCartItems.innerHTML = `
+            <div class="mini-cart__empty">
+              <p>Your cart is empty</p>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-small">
+                Continue Shopping
+              </a>
+            </div>
+          `;
+        } else {
+          const cartItemsHTML = cart.items.map(item => {
+            const itemTotal = item.final_line_price;
+            const unitPrice = item.price;
+            return `
+              <div class="mini-cart__item">
+                <div class="mini-cart__item-image">
+                  ${item.image ? `<img src="${item.image}" alt="${item.title}" loading="lazy">` : ''}
+                </div>
+                <div class="mini-cart__item-details">
+                  <h4 class="mini-cart__item-title">${item.product_title}</h4>
+                  <div class="mini-cart__item-price">${formatMoney(unitPrice)} × ${item.quantity}</div>
+                  <div class="mini-cart__item-total">${formatMoney(itemTotal)}</div>
+                </div>
+                <button class="mini-cart__item-remove" data-key="${item.key}" onclick="removeCartItem('${item.key}')">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                  </svg>
+                </button>
+              </div>
+            `;
+          }).join('');
+
+          miniCartItems.innerHTML = `
+            <div class="mini-cart__items">
+              ${cartItemsHTML}
+            </div>
+            <div class="mini-cart__summary">
+              <div class="mini-cart__subtotal">
+                <span>Subtotal:</span>
+                <span>${formatMoney(cart.total_price)}</span>
+              </div>
+              <div class="mini-cart__actions">
+                <a href="{{ routes.cart_url }}" class="btn btn-primary btn-small btn-block">View Cart</a>
+                <a href="/checkout" class="btn btn-accent btn-small btn-block">Checkout</a>
+              </div>
+            </div>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Error updating mini cart:', error);
+      });
+  }
+
+  // Update mini cart when page loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateMiniCart);
+  } else {
+    updateMiniCart();
+  }
+
+  // Listen for cart updates from other scripts
+  document.addEventListener('cart:updated', updateMiniCart);
+
+  // Remove item from cart function
+  window.removeCartItem = function(key) {
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: key,
+        quantity: 0
+      })
+    })
+    .then(response => response.json())
+    .then(cart => {
+      updateMiniCart();
+    })
+    .catch(error => {
+      console.error('Error removing item:', error);
+    });
+  };
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "Recommended size: 240x40px"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Navigation menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_search",
+      "label": "Enable search",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_wishlist",
+      "label": "Enable wishlist",
+      "default": true
+    },
+    {
+      "type": "product",
+      "id": "featured_product",
+      "label": "Featured product in mega menu"
+    }
+  ]
+}
+{% endschema %}

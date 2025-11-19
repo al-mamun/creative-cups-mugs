@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#12908E">
+
+  {%- comment -%}
+    Theme: Creative Cups Designer
+    Version: 1.0.0
+    Author: Shimul
+    Author URL: https://mamundevstudios.com
+    Description: Custom cup designer with dynamic wrap and style selection
+  {%- endcomment -%}
+
+  {%- comment -%} Dynamic Page Title {%- endcomment -%}
+  <title>
+    {{ page_title }}
+    {%- if current_tags -%} &ndash; {{ current_tags | join: ', ' }}{%- endif -%}
+    {%- if current_page != 1 -%} &ndash; Page {{ current_page }}{%- endif -%}
+    {%- unless page_title contains shop.name -%} &ndash; {{ shop.name }}{%- endunless -%}
+  </title>
+
+  {%- comment -%} Meta Description {%- endcomment -%}
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  {%- comment -%} Canonical URL {%- endcomment -%}
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  {%- comment -%} Preconnect to Shopify CDN {%- endcomment -%}
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+
+  {%- comment -%} Preconnect to Google Fonts {%- endcomment -%}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  {%- comment -%} Favicon {%- endcomment -%}
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | img_url: '32x32' }}">
+  {%- else -%}
+    <link rel="icon" type="image/png" href="{{ 'favicon.png' | asset_url }}">
+  {%- endif -%}
+
+  {%- comment -%} Required Shopify Content {%- endcomment -%}
+  {{ content_for_header }}
+
+  {%- comment -%} Global CSS Files {%- endcomment -%}
+  {{ 'variables.css' | asset_url | stylesheet_tag }}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ 'header.css' | asset_url | stylesheet_tag }}
+  {{ 'footer.css' | asset_url | stylesheet_tag }}
+
+  {%- comment -%} Page-Specific CSS {%- endcomment -%}
+  {%- if template.name == 'index' -%}
+    {{ 'homepage.css' | asset_url | stylesheet_tag }}
+  {%- elsif template.name == 'collection' -%}
+    {{ 'shop.css' | asset_url | stylesheet_tag }}
+    {{ 'custom.css' | asset_url | stylesheet_tag }}
+  {%- elsif template.name == 'product' -%}
+    {{ 'product.css' | asset_url | stylesheet_tag }}
+    {{ 'custom.css' | asset_url | stylesheet_tag }}
+  {%- elsif template.name == 'cart' -%}
+    {{ 'cart.css' | asset_url | stylesheet_tag }}
+  {%- elsif template.name == 'page' and page.handle == 'design-your-cup-bottle' -%}
+    <link rel="stylesheet" href="{{ 'custom.css' | asset_url }}?v={{ 'now' | date: '%s' }}" type="text/css" media="all">
+  {%- elsif template.name == 'page' and page.handle == 'contact' -%}
+    {{ 'contact.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+
+  {%- comment -%} Shopify Analytics {%- endcomment -%}
+  {{ 'shopify_common.js' | shopify_asset_url | script_tag }}
+</head>
+
+<body class="template-{{ template.name | handle }}">
+  {%- comment -%} Skip to Content (Accessibility) {%- endcomment -%}
+  <a class="skip-to-content-link" href="#MainContent">
+    Skip to content
+  </a>
+
+  {%- comment -%} Header Section {%- endcomment -%}
+  {% section 'header' %}
+
+  {%- comment -%} Main Content Area {%- endcomment -%}
+  <main id="MainContent" class="main-content" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {%- comment -%} Footer Section {%- endcomment -%}
+  {% section 'footer' %}
+
+  {%- comment -%} Quick View Modal {%- endcomment -%}
+  {% render 'quick-view-modal' %}
+
+  {%- comment -%} Global JavaScript {%- endcomment -%}
+  {{ 'main.js' | asset_url | script_tag }}
+  {{ 'product-interactions.js' | asset_url | script_tag }}
+
+  {%- comment -%} Page-Specific JavaScript {%- endcomment -%}
+  {%- if template.name == 'product' -%}
+    {{ 'product.js' | asset_url | script_tag }}
+  {%- elsif template.name == 'cart' -%}
+    {{ 'cart.js' | asset_url | script_tag }}
+  {%- elsif template.name == 'collection' -%}
+    {{ 'collection.js' | asset_url | script_tag }}
+    <script>
+      (function () {
+        // Client-side pagination: show 18 items per page if server didn't paginate
+        const perPage = 18;
+        const selectors = [
+          '.collection .products-grid',
+          '.collection-template .products-grid',
+          '.product-grid',
+          '.grid--products',
+          '.products-grid'
+        ];
+
+        function initPagination(container) {
+          if (!container) return;
+          if (container.dataset.jsPaginated) return;
+          const items = Array.from(container.querySelectorAll(':scope > *')).filter(Boolean);
+          if (items.length <= perPage) return;
+          container.dataset.jsPaginated = 'true';
+          container.classList.add('js-pagination-enabled');
+
+          // create pagination state
+          const totalPages = Math.ceil(items.length / perPage);
+          let current = 1;
+
+          // hide all items
+          function renderPage(page) {
+            current = page;
+            const start = (page - 1) * perPage;
+            const end = start + perPage;
+            items.forEach((el, i) => {
+              el.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+            // update pagination UI
+            const pagination = container._customPagination;
+            if (pagination) {
+              const pageButtons = pagination.querySelectorAll('.page-item');
+              pageButtons.forEach(btn => {
+                btn.classList.toggle('active', Number(btn.dataset.page) === page);
+              });
+              const prev = pagination.querySelector('.page-prev');
+              const next = pagination.querySelector('.page-next');
+              if (prev) prev.querySelector('.page-link').toggleAttribute('disabled', page === 1);
+              if (next) next.querySelector('.page-link').toggleAttribute('disabled', page === totalPages);
+            }
+            // scroll to top of container for better UX on mobile
+            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+
+          // build pagination controls
+          const pagination = document.createElement('nav');
+          pagination.className = 'custom-pagination';
+          // prev
+          const prevItem = document.createElement('span');
+          prevItem.className = 'page-item page-prev';
+          prevItem.innerHTML = '<button class="page-link icon" aria-label="Previous page">&laquo;</button>';
+          prevItem.dataset.page = 1;
+          pagination.appendChild(prevItem);
+
+          // pages (simple rendering)
+          for (let p = 1; p <= totalPages; p++) {
+            const item = document.createElement('span');
+            item.className = 'page-item' + (p === 1 ? ' active' : '');
+            item.dataset.page = p;
+            item.innerHTML = '<button class="page-link">' + p + '</button>';
+            pagination.appendChild(item);
+          }
+
+          // next
+          const nextItem = document.createElement('span');
+          nextItem.className = 'page-item page-next';
+          nextItem.innerHTML = '<button class="page-link icon" aria-label="Next page">&raquo;</button>';
+          nextItem.dataset.page = totalPages;
+          pagination.appendChild(nextItem);
+
+          // attach handlers
+          pagination.addEventListener('click', function (e) {
+            const btn = e.target.closest('.page-item');
+            if (!btn) return;
+            const targetPage = Number(btn.dataset.page);
+            if (!targetPage || targetPage === current) return;
+            renderPage(targetPage);
+          });
+
+          // store and insert after container
+          container._customPagination = pagination;
+          container.parentNode.insertBefore(pagination, container.nextSibling);
+
+          // initial render
+          renderPage(1);
+        }
+
+        // try to initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', function () {
+          selectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(initPagination);
+          });
+        });
+      })();
+    </script>
+  {%- elsif template.name == 'page' and page.handle == 'custom-design' -%}
+    {{ 'wraps.js' | asset_url | script_tag }}
+    {{ 'styles.js' | asset_url | script_tag }}
+    {{ 'custom.js' | asset_url | script_tag }}
+  {%- endif -%}
+
+  <!-- Reveal & debug helper for wishlist pages: forcibly unhide wishlist items and report counts -->
+  <script>
+  (function () {
+    function revealWishlist() {
+      var selectors = [
+        '.wishlist',
+        '.wishlist-page',
+        '.account-wishlist',
+        '.wish-list',
+        '.wishlist-items',
+        '.wishlist__items',
+        '.wishlist-list',
+        '.wishlist .products-grid',
+        '.wishlist .product-list'
+      ];
+      var containers = [];
+      selectors.forEach(function(sel){ document.querySelectorAll(sel).forEach(function(n){ containers.push(n); }); });
+
+      if (!containers.length) return;
+      containers.forEach(function(container){
+        var items = Array.from(container.querySelectorAll(':scope > *')).filter(Boolean);
+        items.forEach(function(el){
+          // reset common hiding styles/attributes
+          try {
+            if (el.style) {
+              el.style.display = el.style.display === 'none' ? '' : el.style.display;
+              el.style.visibility = 'visible';
+              el.style.opacity = '1';
+              el.style.position = 'static';
+              el.style.transform = 'none';
+              el.style.left = '';
+              el.style.top = '';
+              el.style.maxHeight = 'none';
+              el.style.height = el.style.height || 'auto';
+              el.style.minHeight = el.style.minHeight || '120px';
+            }
+            el.removeAttribute('hidden');
+            if (el.getAttribute && el.getAttribute('aria-hidden') === 'true') el.setAttribute('aria-hidden', 'false');
+          } catch (e) { /* ignore */ }
+        });
+        console.info('Wishlist debug — container:', container, 'items found:', items.length);
+      });
+
+      // compare with heading count if available
+      var heading = Array.from(document.querySelectorAll('h1,h2,h3')).find(function(h){ return /wish/i.test(h.textContent); });
+      if (heading) {
+        var match = heading.textContent.match(/(\d+)\s*$/);
+        var titleCount = match ? parseInt(match[1], 10) : null;
+        var visibleCount = document.querySelectorAll('.wishlist .products-grid > *').length || document.querySelectorAll('.wishlist-items > *').length;
+        if (titleCount && visibleCount < titleCount) {
+          console.warn('Wishlist mismatch: title shows', titleCount, 'but visible items are', visibleCount);
+          // insert a small non-obtrusive notice for admins/users
+          if (!document.querySelector('.wishlist-debug-note')) {
+            var note = document.createElement('div');
+            note.className = 'wishlist-debug-note';
+            note.style.cssText = 'background:#fff4e5;border:1px solid #ffd8a8;color:#412f00;padding:10px;border-radius:6px;margin:12px 0;font-size:14px';
+            note.textContent = 'Wishlist count: ' + titleCount + '. Visible items: ' + visibleCount + '. Some items may be unavailable or removed.';
+            heading.parentNode.insertBefore(note, heading.nextSibling);
+          }
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', revealWishlist);
+    // also run again after short delays to catch JS-rendered lists
+    setTimeout(revealWishlist, 800);
+    setTimeout(revealWishlist, 2000);
+  })();
+  </script>
+
+  {%- comment -%} Shopify Features {%- endcomment -%}
+  {%- if request.design_mode -%}
+    <script>
+      // Enable theme editor features
+      window.Shopify = window.Shopify || {};
+      window.Shopify.designMode = true;
+    </script>
+  {%- endif -%}
+</body>
+</html>

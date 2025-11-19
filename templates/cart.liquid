@@ -1,0 +1,267 @@
+{% comment %}
+  Cart Template
+  Converted from pages/cart.html
+{% endcomment %}
+
+<main class="main-content">
+  <section class="checkout-progress">
+    <div class="container">
+      <div class="progress-steps">
+        <div class="progress-step progress-step--active">
+          <div class="progress-step__icon">🛒</div>
+          <span class="progress-step__label">Cart</span>
+        </div>
+        <div class="progress-step">
+          <div class="progress-step__icon">📋</div>
+          <span class="progress-step__label">Checkout</span>
+        </div>
+        <div class="progress-step">
+          <div class="progress-step__icon">✓</div>
+          <span class="progress-step__label">Complete</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cart-section">
+    <div class="container">
+      <div class="cart__header">
+        <h1 class="cart__title">
+          Shopping Cart (<span id="cart-item-count">{{ cart.item_count }}</span> items)
+        </h1>
+        {% if cart.item_count > 0 %}
+          <a href="{{ routes.cart_clear_url }}" class="btn-text">Clear Cart</a>
+        {% endif %}
+      </div>
+
+      <div class="cart__layout">
+        <div class="cart__main">
+          {% if cart.item_count == 0 %}
+            <div id="cart-empty" class="cart__empty">
+              <div class="cart__empty-icon">🛒</div>
+              <h2 class="cart__empty-title">Your cart is empty</h2>
+              <p class="cart__empty-description">Add some products to get started!</p>
+              <a href="{{ routes.all_products_collection_url }}" class="btn btn-primary btn-large">Continue Shopping</a>
+            </div>
+          {% else %}
+            <form action="{{ routes.cart_url }}" method="post" novalidate>
+              <div class="cart__items">
+                {% for item in cart.items %}
+                  <div class="cart-item">
+                    <div class="cart-item__image">
+                      <a href="{{ item.url }}">
+                        <img src="{{ item.image | img_url: '200x200' }}" alt="{{ item.title }}" />
+                      </a>
+                    </div>
+                    <div class="cart-item__details">
+                      <h3 class="cart-item__title">
+                        <a href="{{ item.url }}">{{ item.product.title }}</a>
+                      </h3>
+                      {% unless item.variant.title contains 'Default' %}
+                        <p class="cart-item__variant">{{ item.variant.title }}</p>
+                      {% endunless %}
+                      {% if item.properties %}
+                        <div class="cart-item__properties">
+                          {% for property in item.properties %}
+                            {% unless property.first contains '_' %}
+                              <p><strong>{{ property.first }}:</strong> {{ property.last }}</p>
+                            {% endunless %}
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                      <p class="cart-item__price">{{ item.final_price | money }}</p>
+                    </div>
+                    <div class="cart-item__quantity">
+                      <div class="quantity-selector">
+                        <button type="button" class="quantity-btn" data-action="decrease" data-line="{{ forloop.index }}">-</button>
+                        <input type="number" name="updates[]" id="updates_{{ item.key }}" value="{{ item.quantity }}" min="0" class="quantity-input" data-line="{{ forloop.index }}" />
+                        <button type="button" class="quantity-btn" data-action="increase" data-line="{{ forloop.index }}">+</button>
+                      </div>
+                    </div>
+                    <div class="cart-item__total">
+                      <p class="cart-item__total-price">{{ item.final_line_price | money }}</p>
+                    </div>
+                    <div class="cart-item__remove">
+                      <a href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity=0" class="cart-item__remove-btn">
+                        <svg width="20" height="20" fill="none" stroke="currentColor">
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+
+              <div class="cart__actions" id="cart-actions">
+                <a href="{{ routes.all_products_collection_url }}" class="btn btn-secondary">Continue Shopping</a>
+                <button type="submit" name="update" class="btn btn-primary">Update Cart</button>
+              </div>
+            </form>
+          {% endif %}
+        </div>
+
+        {% if cart.item_count > 0 %}
+          <div class="cart__sidebar">
+            <div class="cart__summary">
+              <h2 class="cart__summary-title">Order Summary</h2>
+              <div class="cart__summary-content">
+                <div class="summary-row">
+                  <span>Subtotal:</span>
+                  <span id="cart-subtotal">{{ cart.total_price | money }}</span>
+                </div>
+                <div class="summary-row">
+                  <span>Shipping:</span>
+                  <span id="cart-shipping">Calculated at checkout</span>
+                </div>
+                {% if cart.total_discount > 0 %}
+                  <div class="summary-row">
+                    <span>Discount:</span>
+                    <span id="cart-discount">-{{ cart.total_discount | money }}</span>
+                  </div>
+                {% endif %}
+                <hr class="summary-divider" />
+                <div class="summary-row summary-row--total">
+                  <span>Total:</span>
+                  <span id="cart-total">{{ cart.total_price | money }}</span>
+                </div>
+              </div>
+              <div class="cart__summary-actions">
+                <button type="button" onclick="window.location.href='{{ routes.cart_url }}/checkout'" class="btn btn-accent btn-large btn-block">
+                  Proceed to Checkout
+                </button>
+              </div>
+            </div>
+
+            {% if settings.cart_notes_enable %}
+              <div class="cart-notes">
+                <h3 class="cart-notes__title">Order Notes</h3>
+                <form action="{{ routes.cart_url }}" method="post">
+                  <textarea name="note" class="cart-notes__textarea" placeholder="Special instructions for your order...">{{ cart.note }}</textarea>
+                  <button type="submit" class="btn btn-secondary btn-block">Save Notes</button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  {% if cart.item_count > 0 %}
+    <section class="recommended-section section-padding">
+      <div class="container">
+        <h2 class="section-title">You May Also Like</h2>
+        <div class="products-grid">
+          {% comment %} Show products from collections, excluding custom-designer-only products {% endcomment %}
+          {% assign shown_count = 0 %}
+
+          {% comment %} First try to get products from the first cart item's collection {% endcomment %}
+          {% for item in cart.items limit: 1 %}
+            {% if item.product.collections.size > 0 %}
+              {% assign source_collection = item.product.collections.first %}
+              {% for product in source_collection.products limit: 12 %}
+                {% if shown_count < 6 %}
+                  {% assign is_custom_only = false %}
+                  {% for tag in product.tags %}
+                    {% if tag == 'custom-designer-only' %}
+                      {% assign is_custom_only = true %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% unless is_custom_only %}
+                    {% assign in_cart = false %}
+                    {% for cart_item in cart.items %}
+                      {% if cart_item.product.id == product.id %}
+                        {% assign in_cart = true %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+
+                    {% unless in_cart %}
+                      {% render 'product-card', product: product %}
+                      {% assign shown_count = shown_count | plus: 1 %}
+                    {% endunless %}
+                  {% endunless %}
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+
+          {% comment %} If still not enough products, try other collections {% endcomment %}
+          {% if shown_count < 6 %}
+            {% for collection in collections limit: 10 %}
+              {% if shown_count >= 6 %}{% break %}{% endif %}
+              {% for product in collection.products limit: 12 %}
+                {% if shown_count >= 6 %}{% break %}{% endif %}
+
+                {% assign is_custom_only = false %}
+                {% for tag in product.tags %}
+                  {% if tag == 'custom-designer-only' %}
+                    {% assign is_custom_only = true %}
+                    {% break %}
+                  {% endif %}
+                {% endfor %}
+
+                {% unless is_custom_only %}
+                  {% assign in_cart = false %}
+                  {% assign already_shown = false %}
+
+                  {% for cart_item in cart.items %}
+                    {% if cart_item.product.id == product.id %}
+                      {% assign in_cart = true %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+
+                  {% unless in_cart or already_shown %}
+                    {% render 'product-card', product: product %}
+                    {% assign shown_count = shown_count | plus: 1 %}
+                  {% endunless %}
+                {% endunless %}
+              {% endfor %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  {% endif %}
+</main>
+
+<script>
+  // Cart quantity controls
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.quantity-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const line = this.dataset.line;
+        const action = this.dataset.action;
+        const input = document.querySelector(`input[data-line="${line}"]`);
+        let quantity = parseInt(input.value);
+
+        if (action === 'increase') {
+          quantity++;
+        } else if (action === 'decrease' && quantity > 1) {
+          quantity--;
+        }
+
+        input.value = quantity;
+
+        // Auto-submit form to update cart
+        fetch('{{ routes.cart_change_url }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            line: line,
+            quantity: quantity
+          })
+        }).then(() => {
+          window.location.reload();
+        });
+      });
+    });
+  });
+</script>

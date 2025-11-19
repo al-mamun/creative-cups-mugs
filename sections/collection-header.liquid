@@ -1,0 +1,67 @@
+{% comment %}
+  Collection Header Section
+  Shows collection title and description
+{% endcomment %}
+
+{{ 'shop.css' | asset_url | stylesheet_tag }}
+
+<section class="shop-hero">
+  <div class="container">
+    <h1 class="shop-hero__title">
+      {% if section.settings.show_collection_title %}
+        {{ collection.title }}
+      {% else %}
+        {{ section.settings.custom_title | default: collection.title }}
+      {% endif %}
+    </h1>
+    <p class="shop-hero__subtitle">
+      {% if section.settings.show_collection_description and collection.description != blank %}
+        {{ collection.description }}
+      {% elsif section.settings.custom_description != blank %}
+        {{ section.settings.custom_description }}
+      {% else %}
+        Discover premium home décor and lifestyle essentials
+      {% endif %}
+    </p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection Header",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_title",
+      "label": "Show Collection Title",
+      "default": true,
+      "info": "Display the actual collection title. If disabled, custom title will be used."
+    },
+    {
+      "type": "text",
+      "id": "custom_title",
+      "label": "Custom Title",
+      "info": "Used only if 'Show Collection Title' is disabled"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Show Collection Description",
+      "default": true,
+      "info": "Display the collection's description. If disabled or empty, custom description will be used."
+    },
+    {
+      "type": "textarea",
+      "id": "custom_description",
+      "label": "Default Subtitle",
+      "default": "Discover premium home décor and lifestyle essentials",
+      "info": "Used when collection has no description or when 'Show Collection Description' is disabled"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Header"
+    }
+  ]
+}
+{% endschema %}

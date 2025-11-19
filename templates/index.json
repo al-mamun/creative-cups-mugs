@@ -1,0 +1,172 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "hero-slider",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "vecteezy_colorful-coffee-mugs-on-a-table-ai-generated_32360204.jpg",
+            "title": "Colorful Coffee Moments",
+            "subtitle": "Vibrant mugs and cups that brighten every sip",
+            "button_1_text": "Shop Now",
+            "button_1_link": "/collections/all",
+            "button_2_text": "Custom Designer",
+            "button_2_link": "/pages/custom-designer"
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "vecteezy_water-bottle-with-beautiful-background-generative-ai_31690778.jpg",
+            "title": "Stay Hydrated in Style",
+            "subtitle": "Premium water bottles for your active lifestyle",
+            "button_1_text": "Shop Bottles",
+            "button_1_link": "/collections/bottles",
+            "button_2_text": "View Collection",
+            "button_2_link": "/collections/all"
+          }
+        },
+        "slide_3": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "vecteezy_three-colorful-coffee-mugs-sit-on-a-table-ai-generated_30360887.jpg",
+            "title": "Handcrafted Perfection",
+            "subtitle": "Artisan mugs that make every moment special",
+            "button_1_text": "Explore Mugs",
+            "button_1_link": "/collections/mugs",
+            "button_2_text": "Custom Design",
+            "button_2_link": "/pages/custom-designer"
+          }
+        },
+        "slide_4": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "intro_banner.webp",
+            "title": "Premium Bottles Collection",
+            "subtitle": "Stainless steel bottles for every adventure",
+            "button_1_text": "Shop Now",
+            "button_1_link": "/collections/bottles",
+            "button_2_text": "View All",
+            "button_2_link": "/collections/all"
+          }
+        },
+        "slide_5": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "photo-1556909114-44e3e70034e2.jpg",
+            "title": "Colorful Mugs Collection",
+            "subtitle": "Bright and cheerful mugs for your daily brew",
+            "button_1_text": "Browse Mugs",
+            "button_1_link": "/collections/mugs",
+            "button_2_text": "Shop All",
+            "button_2_link": "/collections/all"
+          }
+        },
+        "slide_6": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "gettyimages-643078110-2048x2048.jpg",
+            "title": "Artisan Mugs Showcase",
+            "subtitle": "Handcrafted mugs in vibrant colors",
+            "button_1_text": "View Collection",
+            "button_1_link": "/collections/artisan-mugs",
+            "button_2_text": "Custom Design",
+            "button_2_link": "/pages/custom-designer"
+          }
+        },
+        "slide_7": {
+          "type": "slide",
+          "settings": {
+            "asset_image": "vecteezy_water-bottle-with-beautiful-background-generative-ai_31690778.jpg",
+            "title": "Elegant Water Bottles",
+            "subtitle": "Premium bottles with beautiful backgrounds",
+            "button_1_text": "Shop Bottles",
+            "button_1_link": "/collections/bottles",
+            "button_2_text": "View All",
+            "button_2_link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3",
+        "slide_4",
+        "slide_5",
+        "slide_6",
+        "slide_7"
+      ],
+      "settings": {
+        "autoplay": true,
+        "autoplay_speed": 5000,
+        "height": "large"
+      }
+    },
+    "featured_collections": {
+      "type": "featured-collections",
+      "settings": {
+        "heading": "Featured Collections",
+        "subheading": "Discover our carefully curated selection",
+        "collections_to_show": 6
+      }
+    },
+    "trending_products": {
+      "type": "product-slider",
+      "settings": {
+        "heading": "Trending Now",
+        "subheading": "Popular picks that our customers love",
+        "collection": "",
+        "products_to_show": 12
+      }
+    },
+    "custom_designer_banner": {
+      "type": "image-with-text",
+      "settings": {
+        "heading": "Design Your Own Cup",
+        "text": "<p>Choose from 70+ unique wraps and 30+ premium styles. Create something truly yours with our easy 4-step designer.</p>",
+        "button_text": "Start Designing Now",
+        "button_link": "/pages/custom-designer",
+        "image_position": "right",
+        "background_color": "#f5f5f5"
+      }
+    },
+    "bestsellers": {
+      "type": "product-grid",
+      "settings": {
+        "heading": "Bestsellers",
+        "subheading": "Our most loved products by customers worldwide",
+        "collection": "",
+        "products_to_show": 12,
+        "columns_desktop": 4,
+        "columns_mobile": 2,
+        "show_view_all": false
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Stay in the Loop",
+        "subheading": "Get the latest updates on new products, special offers, and home styling tips.",
+        "button_text": "Subscribe"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured_collections",
+    "trending_products",
+    "custom_designer_banner",
+    "bestsellers",
+    "newsletter"
+  ]
+}

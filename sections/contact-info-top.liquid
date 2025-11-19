@@ -1,0 +1,180 @@
+{% comment %}
+  Business Hours & Events Section
+{% endcomment %}
+
+<section class="info-top-section">
+  <div class="container">
+    <div class="info-top-grid">
+      <!-- Business Hours -->
+      <div class="hours-card">
+        <div class="hours-card__header">
+          <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+            <polyline points="12 6 12 12 16 14" stroke-width="2"></polyline>
+          </svg>
+          <h2 class="hours-card__title">{{ section.settings.hours_title | default: 'Business Hours' }}</h2>
+        </div>
+        <div class="hours-list">
+          {% for block in section.blocks %}
+            {% if block.type == 'hours' %}
+              <div class="hours-item" {{ block.shopify_attributes }}>
+                <span class="hours-item__day">{{ block.settings.day }}</span>
+                <span class="hours-item__time">{{ block.settings.time }}</span>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Upcoming Events -->
+      <div class="events-card">
+        <div class="events-card__header">
+          <svg width="32" height="32" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6" stroke-width="2"></line>
+            <line x1="8" y1="2" x2="8" y2="6" stroke-width="2"></line>
+            <line x1="3" y1="10" x2="21" y2="10" stroke-width="2"></line>
+          </svg>
+          <h2 class="events-card__title">{{ section.settings.events_title | default: 'Upcoming Events' }}</h2>
+        </div>
+        <div class="events-compact-list">
+          {% for block in section.blocks %}
+            {% if block.type == 'event' %}
+              <div class="event-compact" {{ block.shopify_attributes }}>
+                <div class="event-compact__date">
+                  <span class="event-compact__day">{{ block.settings.day }}</span>
+                  <span class="event-compact__month">{{ block.settings.month }}</span>
+                </div>
+                <div class="event-compact__content">
+                  <h3 class="event-compact__title">{{ block.settings.event_title }}</h3>
+                  <p class="event-compact__desc">{{ block.settings.description }}</p>
+                  <p class="event-compact__time">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" stroke-width="2"></circle>
+                      <polyline points="12 6 12 12 16 14" stroke-width="2"></polyline>
+                    </svg>
+                    {{ block.settings.time }}
+                  </p>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Business Hours & Events",
+  "settings": [
+    {
+      "type": "text",
+      "id": "hours_title",
+      "label": "Business Hours Title",
+      "default": "Business Hours"
+    },
+    {
+      "type": "text",
+      "id": "events_title",
+      "label": "Events Title",
+      "default": "Upcoming Events"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "hours",
+      "name": "Business Hours Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "day",
+          "label": "Day(s)",
+          "default": "Monday - Friday"
+        },
+        {
+          "type": "text",
+          "id": "time",
+          "label": "Time",
+          "default": "9:00 AM - 6:00 PM"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "name": "Event",
+      "settings": [
+        {
+          "type": "text",
+          "id": "day",
+          "label": "Day Number",
+          "default": "15"
+        },
+        {
+          "type": "text",
+          "id": "month",
+          "label": "Month (3 letters)",
+          "default": "Mar"
+        },
+        {
+          "type": "text",
+          "id": "event_title",
+          "label": "Event Title",
+          "default": "Spring Collection Launch"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Discover our latest ceramic designs"
+        },
+        {
+          "type": "text",
+          "id": "time",
+          "label": "Time",
+          "default": "10:00 AM - 6:00 PM"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Business Hours & Events",
+      "blocks": [
+        {
+          "type": "hours",
+          "settings": {
+            "day": "Monday - Friday",
+            "time": "9:00 AM - 6:00 PM"
+          }
+        },
+        {
+          "type": "hours",
+          "settings": {
+            "day": "Saturday",
+            "time": "10:00 AM - 4:00 PM"
+          }
+        },
+        {
+          "type": "hours",
+          "settings": {
+            "day": "Sunday",
+            "time": "Closed"
+          }
+        },
+        {
+          "type": "event",
+          "settings": {
+            "day": "15",
+            "month": "Mar",
+            "event_title": "Spring Collection Launch",
+            "description": "Discover our latest ceramic designs and spring-themed mugs",
+            "time": "10:00 AM - 6:00 PM"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,726 @@
+{% comment %}
+  Custom Designer Section
+  Main customization interface with preview and all customization options
+{% endcomment %}
+
+<style>
+/* Critical Layout CSS - Ensures designer layout works even if external CSS fails to load */
+.designer-layout {
+  display: grid !important;
+  grid-template-columns: 40% 1fr !important;
+  gap: 2rem !important;
+  align-items: start !important;
+}
+
+@media (max-width: 1024px) {
+  .designer-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+</style>
+
+<section class="custom-designer">
+  <div class="container">
+    <div class="designer-layout">
+      <!-- Left: Preview Area -->
+      <div class="preview-area">
+        <div class="preview-card">
+          <h3 class="preview-card__title">{{ section.settings.preview_title | default: 'Live Preview' }}</h3>
+          <div class="preview-container">
+            <div class="mug-preview" id="mug-preview">
+              <div class="cup-image-wrapper">
+                {% if section.settings.default_cup_image %}
+                  <div class="preview-layers">
+                    <img id="selected-cup-image" class="preview-cup-base" src="{{ section.settings.default_cup_image | img_url: '800x800' }}" alt="Selected Cup" />
+                    <div id="preview-wrap-overlay" class="preview-wrap-layer"></div>
+                    <div id="preview-style-overlay" class="preview-style-layer"></div>
+                  </div>
+                {% else %}
+                  <div id="selected-cup-placeholder" class="preview-placeholder">
+                    <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                      <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                      <line x1="6" y1="1" x2="6" y2="4"/>
+                      <line x1="10" y1="1" x2="10" y2="4"/>
+                      <line x1="14" y1="1" x2="14" y2="4"/>
+                    </svg>
+                    <p class="preview-placeholder__text">Select a cup to preview</p>
+                  </div>
+                  <div class="preview-layers" style="display: none;">
+                    <img id="selected-cup-image" class="preview-cup-base" src="" alt="Selected Cup" />
+                    <div id="preview-wrap-overlay" class="preview-wrap-layer"></div>
+                    <div id="preview-style-overlay" class="preview-style-layer"></div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            <div class="preview-actions">
+              <button class="preview-btn" id="rotate-left">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M1 4v6h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Rotate Left
+              </button>
+              <button class="preview-btn" id="rotate-right">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path d="M23 4v6h-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Rotate Right
+              </button>
+            </div>
+          </div>
+
+          <!-- Selected Items Summary -->
+          <div class="preview-selected-summary" id="preview-selected-summary">
+            <h4 class="preview-summary__title">Your Selections</h4>
+
+            <!-- Selected Cup -->
+            <div class="preview-summary__section" id="summary-cup-section" style="display: none;">
+              <div class="preview-summary__label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                </svg>
+                Cup:
+              </div>
+              <div class="preview-summary__item" id="summary-cup-name">-</div>
+            </div>
+
+            <!-- Selected Wraps -->
+            <div class="preview-summary__section" id="summary-wraps-section" style="display: none;">
+              <div class="preview-summary__label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                Wraps (<span id="summary-wraps-count">0</span>):
+              </div>
+              <div class="preview-summary__items" id="summary-wraps-list"></div>
+            </div>
+
+            <!-- Selected Styles -->
+            <div class="preview-summary__section" id="summary-styles-section" style="display: none;">
+              <div class="preview-summary__label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                  <path d="M2 17l10 5 10-5"/>
+                  <path d="M2 12l10 5 10-5"/>
+                </svg>
+                Styles (<span id="summary-styles-count">0</span>):
+              </div>
+              <div class="preview-summary__items" id="summary-styles-list"></div>
+            </div>
+
+            <!-- TikTok Live -->
+            <div class="preview-summary__section" id="summary-tiktok-section" style="display: none;">
+              <div class="preview-summary__label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+                TikTok Live:
+              </div>
+              <div class="preview-summary__item" id="summary-tiktok-value">-</div>
+            </div>
+
+            <div class="preview-summary__empty" id="summary-empty">
+              No items selected yet. Start customizing!
+            </div>
+          </div>
+
+          <div class="preview-info">
+            <div class="price-display">
+              <span class="price-label">{{ section.settings.price_label | default: 'Total Price:' }}</span>
+              <span class="price-value" id="total-price">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Step-by-Step Options -->
+      <div class="options-area">
+        <div class="step-content">
+          <!-- Step 1: Pick Your Cup -->
+          <div class="step-panel active" data-step="1">
+            <h3 class="step-title">{{ section.settings.step1_title | default: 'Pick Your Cup' }}</h3>
+            <div class="cup-grid" id="cup-grid">
+              <!-- Cups will be loaded dynamically from products -->
+              <div class="loading-spinner">Loading cups...</div>
+            </div>
+            <div class="step-actions">
+              <button class="btn-next" data-next="2">{{ section.settings.next_button_text | default: 'Next' }}</button>
+            </div>
+          </div>
+
+          <!-- Step 2: Pick Your Wrap Designs -->
+          <div class="step-panel" data-step="2">
+            <h3 class="step-title">{{ section.settings.step2_title | default: 'Pick Your Wrap Designs' }}</h3>
+            <p class="step-subtitle">{{ section.settings.step2_subtitle | default: 'Select one or multiple wrap designs for your cup' }}</p>
+
+            <div class="wrap-categories" id="wrap-categories">
+              <button class="category-tab active" data-category="all">
+                <span class="category-icon">🎨</span>
+                <span class="category-name">All Wraps</span>
+              </button>
+              {% assign wrap_categories = section.blocks | where: 'type', 'wrap_category' %}
+              {% for category in wrap_categories %}
+                <button class="category-tab" data-category="{{ category.settings.category_id }}">
+                  <span class="category-icon">{{ category.settings.icon }}</span>
+                  <span class="category-name">{{ category.settings.name }}</span>
+                </button>
+              {% endfor %}
+            </div>
+
+            <div class="selected-wraps" id="selected-wraps-display">
+              <div class="selected-wraps__header">
+                <h4 class="selected-wraps__title">Selected Wraps (<span id="selected-count">0</span>)</h4>
+                <button class="selected-wraps__clear" id="clear-wraps">Clear All</button>
+              </div>
+              <div class="selected-wraps__list" id="selected-wraps-list">
+                <p class="selected-wraps__empty">No wraps selected yet</p>
+              </div>
+            </div>
+
+            <div class="wrap-gallery" id="wrap-gallery">
+              <!-- Wrap products will be loaded dynamically from Shopify -->
+              <div class="loading-spinner">Loading wrap products...</div>
+            </div>
+
+            <div class="step-actions">
+              <button class="btn-back" data-back="1">{{ section.settings.back_button_text | default: 'Back' }}</button>
+              <button class="btn-next" data-next="3">{{ section.settings.next_button_text | default: 'Next' }}</button>
+            </div>
+          </div>
+
+          <!-- Step 3: Pick Style & Colors -->
+          <div class="step-panel" data-step="3">
+            <h3 class="step-title">{{ section.settings.step3_title | default: 'Pick Your Style & Colors' }}</h3>
+            <p class="step-subtitle">{{ section.settings.step3_subtitle | default: 'Choose ONE style category, then select your textures/colors' }}</p>
+
+            <div class="style-selector">
+              {% assign style_categories = section.blocks | where: 'type', 'style_category' %}
+              {% for category in style_categories %}
+                <label class="style-tab">
+                  <input type="radio" name="style-type" value="{{ category.settings.category_id }}" {% if forloop.first %}checked{% endif %} />
+                  <span class="style-tab__btn">{{ category.settings.icon }} {{ category.settings.name }}</span>
+                </label>
+              {% endfor %}
+            </div>
+
+            <div class="selected-styles" id="selected-styles-display">
+              <div class="selected-styles__header">
+                <h4 class="selected-styles__title">Selected Textures (<span id="selected-styles-count">0</span>)</h4>
+                <button class="selected-styles__clear" id="clear-styles">Clear All</button>
+              </div>
+              <div class="selected-styles__list" id="selected-styles-list">
+                <p class="selected-styles__empty">No styles selected yet</p>
+              </div>
+            </div>
+
+            <div class="style-gallery" id="style-gallery">
+              {% for block in section.blocks %}
+                {% if block.type == 'style' %}
+                  {% assign style_category = block.settings.category %}
+                  {% if style_category == 'custom' and block.settings.category_custom != blank %}
+                    {% assign style_category = block.settings.category_custom %}
+                  {% endif %}
+                  <div class="style-item" data-category="{{ style_category }}" data-price="{{ block.settings.price }}" data-id="{{ block.id }}">
+                    <div class="style-item__image">
+                      {% if block.settings.image %}
+                        <img src="{{ block.settings.image | img_url: '200x200' }}" alt="{{ block.settings.title }}" loading="lazy" />
+                      {% else %}
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="item-placeholder-icon">
+                          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                          <path d="M2 17l10 5 10-5"/>
+                          <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                      {% endif %}
+                    </div>
+                    <div class="style-item__info">
+                      <h4 class="style-item__title">{{ block.settings.title }}</h4>
+                      <p class="style-item__price">${{ block.settings.price }}</p>
+                    </div>
+                    <button class="style-item__select" data-style-id="{{ block.id }}" data-style-title="{{ block.settings.title }}" data-style-price="{{ block.settings.price }}">
+                      <span class="select-text">Select</span>
+                      <span class="selected-text">Selected</span>
+                    </button>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            <div class="step-actions">
+              <button class="btn-back" data-back="2">{{ section.settings.back_button_text | default: 'Back' }}</button>
+              <button class="btn-next" data-next="4">{{ section.settings.next_button_text | default: 'Next' }}</button>
+            </div>
+          </div>
+
+          <!-- Step 4: TikTok Live -->
+          <div class="step-panel" data-step="4">
+            <h3 class="step-title">{{ section.settings.step4_title | default: 'Watch Your Cup Be Made' }}</h3>
+            <div class="tiktok-option">
+              <div class="tiktok-card">
+                <div class="tiktok-icon">
+                  <svg width="60" height="60" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                  </svg>
+                </div>
+                <h4 class="tiktok-title">{{ section.settings.tiktok_title | default: 'Live on TikTok' }}</h4>
+                <p class="tiktok-desc">{{ section.settings.tiktok_description | default: 'Watch your custom cup being created live on our TikTok stream!' }}</p>
+
+                <div class="tiktok-choice">
+                  <label class="tiktok-radio">
+                    <input type="radio" name="tiktok-live" value="yes" />
+                    <span class="tiktok-btn yes-btn">
+                      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      {{ section.settings.tiktok_yes_text | default: 'Yes, I want to watch!' }}
+                    </span>
+                  </label>
+                  <label class="tiktok-radio">
+                    <input type="radio" name="tiktok-live" value="no" checked />
+                    <span class="tiktok-btn no-btn">
+                      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <line x1="18" y1="6" x2="6" y2="18" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="6" y1="6" x2="18" y2="18" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                      {{ section.settings.tiktok_no_text | default: 'No thanks' }}
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button class="btn-back" data-back="3">{{ section.settings.back_button_text | default: 'Back' }}</button>
+              <button type="button" class="btn-checkout" id="add-custom-to-cart">{{ section.settings.checkout_button_text | default: 'Add to Cart' }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.customDesignerData = {
+    // COLLECTION-BASED LOADING - No Block Limits!
+    // Products are now loaded from Shopify collections
+    useCollections: {{ section.settings.use_collections | default: false }},
+
+    // Collection handles for automatic product loading
+    cupCollection: "{{ section.settings.cup_collection | escape }}",
+    wrapCollection: "{{ section.settings.wrap_collection | escape }}",
+    styleCollection: "{{ section.settings.style_collection | escape }}",
+
+    // Legacy block-based data (for backward compatibility)
+    cupProducts: [
+      {% for block in section.blocks %}
+        {% if block.type == 'cup_product' and block.settings.product != blank %}
+          "{{ block.settings.product }}"{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ],
+    cups: [],
+    wrapProducts: [
+      {% for block in section.blocks %}
+        {% if block.type == 'wrap_product' and block.settings.product != blank %}
+          {
+            handle: "{{ block.settings.product | escape }}",
+            category: "{{ block.settings.category | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ],
+    wrapCategories: [
+      {% for block in section.blocks %}
+        {% if block.type == 'wrap_category' %}
+          {
+            id: "{{ block.settings.category_id | escape }}",
+            name: "{{ block.settings.name | escape }}",
+            icon: "{{ block.settings.icon | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ],
+    styleCategories: [
+      {% for block in section.blocks %}
+        {% if block.type == 'style_category' %}
+          {
+            id: "{{ block.settings.category_id | escape }}",
+            name: "{{ block.settings.name | escape }}",
+            icon: "{{ block.settings.icon | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ],
+    styles: [
+      {% for block in section.blocks %}
+        {% if block.type == 'style' %}
+          {
+            id: "{{ block.id }}",
+            title: "{{ block.settings.title | escape }}",
+            price: {{ block.settings.price | default: 0 }},
+            category: "{{ block.settings.category }}",
+            image: "{{ block.settings.image | img_url: '200x200' }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ]
+  };
+</script>
+
+<script src="{{ 'custom.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Custom Cup Designer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "🚀 UNLIMITED PRODUCTS - Collection Mode"
+    },
+    {
+      "type": "paragraph",
+      "content": "Enable this to load products from Shopify collections instead of blocks. This removes the 50-block limit and gives you UNLIMITED products!"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_collections",
+      "label": "Use Collection Mode (Unlimited Products)",
+      "default": false,
+      "info": "When enabled, products load from collections. When disabled, products load from blocks below (max 50)."
+    },
+    {
+      "type": "collection",
+      "id": "cup_collection",
+      "label": "Cup Products Collection",
+      "info": "Select a collection containing all your cup products. Products will automatically load from this collection."
+    },
+    {
+      "type": "collection",
+      "id": "wrap_collection",
+      "label": "Wrap Products Collection",
+      "info": "Select a collection containing all your wrap design products. Use tags like 'category:quotes' to organize by category."
+    },
+    {
+      "type": "collection",
+      "id": "style_collection",
+      "label": "Style Products Collection",
+      "info": "Select a collection containing all your style/texture products. Use tags like 'category:glitter' to organize by category."
+    },
+    {
+      "type": "paragraph",
+      "content": "📝 SETUP TIP: Create 3 collections in Shopify (Products > Collections). Add cup products to the cup collection, wrap products to the wrap collection, and style products to the style collection. Use product tags for categories (e.g., 'category:quotes', 'category:glitter')."
+    },
+    {
+      "type": "header",
+      "content": "Preview Section"
+    },
+    {
+      "type": "text",
+      "id": "preview_title",
+      "label": "Preview Title",
+      "default": "Live Preview"
+    },
+    {
+      "type": "image_picker",
+      "id": "default_cup_image",
+      "label": "Default Cup Image",
+      "info": "Optional: Shown in preview before customer selects a cup. If not set, a placeholder icon will be displayed."
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price Label",
+      "default": "Total Price:"
+    },
+    {
+      "type": "header",
+      "content": "Step Titles"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Step 1 Title",
+      "default": "Pick Your Cup"
+    },
+    {
+      "type": "text",
+      "id": "step2_title",
+      "label": "Step 2 Title",
+      "default": "Pick Your Wrap Designs"
+    },
+    {
+      "type": "text",
+      "id": "step2_subtitle",
+      "label": "Step 2 Subtitle",
+      "default": "Select one or multiple wrap designs for your cup"
+    },
+    {
+      "type": "text",
+      "id": "step3_title",
+      "label": "Step 3 Title",
+      "default": "Pick Your Style & Colors"
+    },
+    {
+      "type": "text",
+      "id": "step3_subtitle",
+      "label": "Step 3 Subtitle",
+      "default": "Choose ONE style category, then select your textures/colors"
+    },
+    {
+      "type": "text",
+      "id": "step4_title",
+      "label": "Step 4 Title",
+      "default": "Watch Your Cup Be Made"
+    },
+    {
+      "type": "header",
+      "content": "TikTok Section"
+    },
+    {
+      "type": "text",
+      "id": "tiktok_title",
+      "label": "TikTok Title",
+      "default": "Live on TikTok"
+    },
+    {
+      "type": "textarea",
+      "id": "tiktok_description",
+      "label": "TikTok Description",
+      "default": "Watch your custom cup being created live on our TikTok stream! Join our community and see the magic happen in real-time."
+    },
+    {
+      "type": "text",
+      "id": "tiktok_yes_text",
+      "label": "Yes Button Text",
+      "default": "Yes, I want to watch!"
+    },
+    {
+      "type": "text",
+      "id": "tiktok_no_text",
+      "label": "No Button Text",
+      "default": "No thanks"
+    },
+    {
+      "type": "header",
+      "content": "Button Labels"
+    },
+    {
+      "type": "text",
+      "id": "next_button_text",
+      "label": "Next Button",
+      "default": "Next"
+    },
+    {
+      "type": "text",
+      "id": "back_button_text",
+      "label": "Back Button",
+      "default": "Back"
+    },
+    {
+      "type": "text",
+      "id": "checkout_button_text",
+      "label": "Add to Cart Button",
+      "default": "Add to Cart"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "cup_product",
+      "name": "🥤 Cup Product",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a cup/bottle product from your Shopify store. The product's title, price, and images will be pulled automatically."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Cup Product"
+        }
+      ]
+    },
+    {
+      "type": "wrap_category",
+      "name": "📁 Wrap Category",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Create a category to organize your wrap designs in Step 2. Add this first, then add wrap designs that belong to this category."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Category Display Name",
+          "default": "Nature",
+          "info": "This name will be shown to customers. e.g., 'Animals', 'Sports', 'Holidays'"
+        },
+        {
+          "type": "text",
+          "id": "category_id",
+          "label": "Category ID",
+          "default": "nature",
+          "info": "IMPORTANT: Use lowercase letters only, no spaces. Replace spaces with hyphens. e.g., 'nature', 'cute-animals', 'sports-teams'"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji)",
+          "default": "🌿",
+          "placeholder": "🌿",
+          "info": "Pick an emoji to represent this category. Copy/paste emoji here."
+        }
+      ]
+    },
+    {
+      "type": "wrap_product",
+      "name": "🎨 Wrap Product",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a wrap product from your Shopify store. The product's title, price, image, and inventory will be pulled automatically from Shopify."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Wrap Product",
+          "info": "Choose a Shopify product that represents this wrap design. Inventory will be managed automatically."
+        },
+        {
+          "type": "paragraph",
+          "content": "⚠️ IMPORTANT: Enter the exact Category ID from your 📁 Wrap Category blocks above. Open a Wrap Category block and copy the 'Category ID' field exactly (lowercase, no spaces, use hyphens)."
+        },
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category ID",
+          "placeholder": "e.g., quotes-adult, mum, skulls",
+          "info": "MUST match a Wrap Category block's Category ID exactly. Examples: 'quotes-adult', 'mum', 'skulls', 'lollies-sweets'"
+        }
+      ]
+    },
+    {
+      "type": "style_category",
+      "name": "📂 Style Category",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Create a style/texture category for Step 3 (e.g., Glitter, LAVA, Drink/Milk). Customers pick ONE category, then select colors/textures within it."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Category Display Name",
+          "default": "Glitter",
+          "info": "This name will be shown to customers. e.g., 'Glitter', 'LAVA', 'Marble', 'Holographic'"
+        },
+        {
+          "type": "text",
+          "id": "category_id",
+          "label": "Category ID",
+          "default": "glitter",
+          "info": "IMPORTANT: Use lowercase letters only, no spaces. Replace spaces with hyphens. e.g., 'glitter', 'lava-effect', 'marble-texture'"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji)",
+          "default": "✨",
+          "placeholder": "✨",
+          "info": "Pick an emoji to represent this style. Copy/paste emoji here."
+        }
+      ]
+    },
+    {
+      "type": "style",
+      "name": "✨ Style/Texture Option",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a specific color or texture option within a style category in Step 3. Customers can select multiple options from the category they choose."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Style/Color Name",
+          "default": "Gold Glitter",
+          "info": "e.g., 'Rose Gold Glitter', 'Blue LAVA', 'Pink Marble Swirl'"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Style/Texture Sample Image",
+          "info": "Recommended: 200x200px or larger showing the color/texture. If not set, a placeholder icon will be shown."
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Additional Price (numbers only)",
+          "default": "3.00",
+          "info": "Extra cost for this style/texture. Enter without $ symbol. e.g., 3.00"
+        },
+        {
+          "type": "paragraph",
+          "content": "⚠️ CATEGORY MATCHING: Copy the exact Category ID from your Style Category blocks above. Look in the block list, open a Style Category block, and copy its 'Category ID' field exactly as shown."
+        },
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Select Category",
+          "options": [
+            {
+              "value": "glitter",
+              "label": "Glitter (glitter)"
+            },
+            {
+              "value": "lava",
+              "label": "LAVA (lava)"
+            },
+            {
+              "value": "drink",
+              "label": "Drink/Milk (drink)"
+            },
+            {
+              "value": "honey",
+              "label": "Honey Drip (honey)"
+            },
+            {
+              "value": "marble",
+              "label": "Marble (marble)"
+            },
+            {
+              "value": "holographic",
+              "label": "Holographic (holographic)"
+            },
+            {
+              "value": "custom",
+              "label": "Other/Custom (enter below)"
+            }
+          ],
+          "default": "glitter",
+          "info": "Select a category from common options, or choose 'Other/Custom' to enter your own in the field below."
+        },
+        {
+          "type": "text",
+          "id": "category_custom",
+          "label": "Custom Category ID (if 'Other' selected above)",
+          "placeholder": "e.g., glow-in-dark, metallic",
+          "info": "Only fill this if you selected 'Other/Custom' above. Must match your Style Category ID exactly (lowercase, no spaces)."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 999,
+  "presets": [
+    {
+      "name": "Custom Designer"
+    }
+  ]
+}
+{% endschema %}

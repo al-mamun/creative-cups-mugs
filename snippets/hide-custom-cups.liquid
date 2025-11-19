@@ -1,0 +1,31 @@
+{% comment %}
+  Hide Custom Cup Products from Collections, Home, and Related Products
+
+  Usage:
+  Add this tag to your cup products: "custom-designer-only"
+  Then use this snippet to filter them out from regular listings
+{% endcomment %}
+
+{% comment %}
+  Check if product should be hidden
+  Returns true if product has "custom-designer-only" tag
+{% endcomment %}
+
+{% assign is_custom_cup = false %}
+{% for tag in product.tags %}
+  {% if tag == 'custom-designer-only' %}
+    {% assign is_custom_cup = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% comment %}
+  Usage in collection/product loops:
+
+  {% for product in collection.products %}
+    {% render 'hide-custom-cups', product: product %}
+    {% unless is_custom_cup %}
+      ... display product ...
+    {% endunless %}
+  {% endfor %}
+{% endcomment %}

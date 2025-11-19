@@ -1,0 +1,49 @@
+{
+  "sections": {
+    "custom_hero": {
+      "type": "custom-hero",
+      "settings": {
+        "hero_title": "Create / Design Your Cup",
+        "hero_subtitle": "Follow our easy 4-step process to create your perfect custom cup"
+      }
+    },
+    "progress_steps": {
+      "type": "progress-steps",
+      "settings": {
+        "step1_label": "Pick Your Cup",
+        "step2_label": "Pick Your Wrap",
+        "step3_label": "Style & Colors",
+        "step4_label": "TikTok Live"
+      }
+    },
+    "custom_designer": {
+      "type": "custom-designer",
+      "blocks": {},
+      "block_order": [],
+      "settings": {
+        "hero_title": "Create / Design Your Cup",
+        "hero_subtitle": "Follow our easy 4-step process to create your perfect custom cup",
+        "preview_title": "Live Preview",
+        "price_label": "Total Price:",
+        "step1_title": "Pick Your Cup",
+        "step2_title": "Pick Your Wrap Designs",
+        "step2_subtitle": "Select one or multiple wrap designs for your cup",
+        "step3_title": "Pick Your Style & Colors",
+        "step3_subtitle": "Choose ONE style category, then select your textures/colors",
+        "step4_title": "Watch Your Cup Be Made",
+        "tiktok_title": "Live on TikTok",
+        "tiktok_description": "Watch your custom cup being created live on our TikTok stream! Join our community and see the magic happen in real-time.",
+        "tiktok_yes_text": "Yes, I want to watch!",
+        "tiktok_no_text": "No thanks",
+        "next_button_text": "Next",
+        "back_button_text": "Back",
+        "checkout_button_text": "Add to Cart"
+      }
+    }
+  },
+  "order": [
+    "custom_hero",
+    "progress_steps",
+    "custom_designer"
+  ]
+}

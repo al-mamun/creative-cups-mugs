@@ -1,0 +1,217 @@
+{% comment %}
+  Product Template
+  Converted from pages/product.html
+{% endcomment %}
+
+<main class="main-content">
+  <!-- Breadcrumb -->
+  <section class="breadcrumb">
+    <div class="container">
+      <nav class="breadcrumb__nav">
+        <ol class="breadcrumb__list">
+          <li class="breadcrumb__item">
+            <a href="{{ routes.root_url }}" class="breadcrumb__link">Home</a>
+          </li>
+          <li class="breadcrumb__item">
+            <a href="{{ routes.all_products_collection_url }}" class="breadcrumb__link">Shop</a>
+          </li>
+          {% if product.collections.size > 0 %}
+            <li class="breadcrumb__item">
+              <a href="{{ product.collections.first.url }}" class="breadcrumb__link">{{ product.collections.first.title }}</a>
+            </li>
+          {% endif %}
+          <li class="breadcrumb__item breadcrumb__item--current">
+            {{ product.title }}
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Product Details -->
+  <section class="product section-padding">
+    <div class="container">
+      <div class="product__grid">
+        <!-- Product Images -->
+        <div class="product__images">
+          <div class="product__gallery">
+            <div class="product__main-image">
+              <img id="main-product-image" src="{{ product.featured_image | img_url: '800x800' }}" alt="{{ product.title }}" class="product__image" />
+              <button class="product__zoom-btn" id="zoom-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor">
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="M21 21l-4.35-4.35" />
+                  <path d="M11 8a3 3 0 0 0-3 3" />
+                </svg>
+              </button>
+            </div>
+            <div class="product__thumbnails">
+              {% for image in product.images limit: 4 %}
+                <button class="product__thumbnail {% if forloop.first %}active{% endif %}" data-image="{{ image | img_url: '800x800' }}">
+                  <img src="{{ image | img_url: '100x100' }}" alt="{{ product.title }} - Image {{ forloop.index }}" />
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product__info">
+          {% form 'product', product %}
+            <div class="product__header">
+              <h1 class="product__title">{{ product.title }}</h1>
+              {% if product.metafields.reviews.rating %}
+                <div class="product__rating">
+                  <div class="product__stars">
+                    {% for i in (1..5) %}
+                      <svg class="product__star" width="16" height="16" fill="currentColor">
+                        <path d="M8 1l2 4 4.5.7-3.3 3.2.8 4.6L8 11l-4 2.5.8-4.6L1.5 5.7 6 5l2-4z" />
+                      </svg>
+                    {% endfor %}
+                  </div>
+                  <span class="product__rating-text">{{ product.metafields.reviews.rating }} ({{ product.metafields.reviews.count }} reviews)</span>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="product__price">
+              <span class="product__price-current">{{ product.selected_or_first_available_variant.price | money }}</span>
+              {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+                <span class="product__price-compare">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+              {% endif %}
+            </div>
+
+            <div class="product__description">
+              {{ product.description }}
+            </div>
+
+            <div class="product__options">
+              {% unless product.has_only_default_variant %}
+                {% for option in product.options_with_values %}
+                  <div class="product__option">
+                    <label class="product__option-label">{{ option.name }}</label>
+                    {% if option.name == 'Color' %}
+                      <div class="product__color-options">
+                        {% for value in option.values %}
+                          <button class="product__color-option {% if forloop.first %}active{% endif %}" data-option="{{ option.position }}" data-value="{{ value }}">
+                            <span class="visually-hidden">{{ value }}</span>
+                          </button>
+                        {% endfor %}
+                      </div>
+                    {% else %}
+                      <div class="product__size-options">
+                        {% for value in option.values %}
+                          <button class="product__size-option {% if forloop.first %}active{% endif %}" data-option="{{ option.position }}" data-value="{{ value }}">
+                            {{ value }}
+                          </button>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              {% endunless %}
+
+            </div>
+
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" />
+
+            <div class="product__purchase">
+              <div class="product__purchase-row">
+                <div class="product__quantity-wrapper">
+                  <label class="product__option-label" for="quantity">Quantity</label>
+                  <div class="product__quantity">
+                    <button type="button" class="product__quantity-btn" id="decrease-qty">-</button>
+                    <input type="number" class="product__quantity-input" name="quantity" id="quantity" value="1" min="1" max="10" />
+                    <button type="button" class="product__quantity-btn" id="increase-qty">+</button>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large product__add-to-cart" {% unless product.available %}disabled{% endunless %}>
+                  {% if product.available %}
+                    Add to Cart - {{ product.selected_or_first_available_variant.price | money }}
+                  {% else %}
+                    Sold Out
+                  {% endif %}
+                </button>
+
+                <button type="button" class="btn btn-secondary btn-icon-only product__wishlist" id="add-to-wishlist">
+                  <svg width="20" height="20" fill="none" stroke="currentColor">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                  <span class="visually-hidden">Add to Wishlist</span>
+                </button>
+              </div>
+            </div>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Products -->
+  <section class="recommended-section">
+    <div class="container">
+      <h2 class="section-title">You May Also Like</h2>
+      <div class="products-grid">
+        {% comment %} Show products from same collection or all products {% endcomment %}
+        {% assign shown_count = 0 %}
+        {% assign source_collection = product.collections.first %}
+
+        {% if source_collection %}
+          {% comment %} Show products from same collection {% endcomment %}
+          {% for related_product in source_collection.products %}
+            {% if shown_count < 6 and related_product.id != product.id %}
+              {% assign is_custom_only = false %}
+              {% for tag in related_product.tags %}
+                {% if tag == 'custom-designer-only' %}
+                  {% assign is_custom_only = true %}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+
+              {% unless is_custom_only %}
+                {% render 'product-card', product: related_product %}
+                {% assign shown_count = shown_count | plus: 1 %}
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+
+        {% comment %} If not enough products from collection, fill from all products {% endcomment %}
+        {% if shown_count < 6 %}
+          {% for related_product in collections.all.products %}
+            {% if shown_count < 6 and related_product.id != product.id %}
+              {% assign is_custom_only = false %}
+              {% for tag in related_product.tags %}
+                {% if tag == 'custom-designer-only' %}
+                  {% assign is_custom_only = true %}
+                  {% break %}
+                {% endif %}
+              {% endfor %}
+
+              {% unless is_custom_only %}
+                {% render 'product-card', product: related_product %}
+                {% assign shown_count = shown_count | plus: 1 %}
+              {% endunless %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Image Zoom Modal -->
+<div class="zoom-modal" id="zoom-modal">
+  <div class="zoom-modal__backdrop"></div>
+  <div class="zoom-modal__content">
+    <button class="zoom-modal__close" id="zoom-close">
+      <svg width="24" height="24" fill="none" stroke="currentColor">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <img class="zoom-modal__image" id="zoom-image" src="" alt="" />
+  </div>
+</div>
+

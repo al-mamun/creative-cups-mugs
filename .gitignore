@@ -1,0 +1,68 @@
+# Shopify Theme Development .gitignore
+
+# Deployment batch files (temporary deployment scripts)
+*.bat
+DEPLOY_*.bat
+deploy-*.bat
+MANUAL_COMMAND.txt
+DEPLOY_INSTRUCTIONS.txt
+
+# Backup and temporary files
+backup/
+temp-pull/
+*.zip
+*.bak
+*.tmp
+
+# Documentation files (keeping only main README.md)
+COLLECTION_MODE_SETUP.md
+ENABLE_COLLECTION_MODE.md
+SIMPLE_TAGS_README.md
+UNLIMITED_PRODUCTS_QUICKSTART.md
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# System files
+desktop.ini
+.Spotlight-V100
+.Trashes
+
+# Node modules and package files (if using build tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Environment and config files
+.env
+.env.local
+.env.*.local
+config.yml
+
+# Build and dist folders
+dist/
+build/
+
+# Log files
+*.log
+logs/
+
+# Cache directories
+.cache/
+.sass-cache/
+*.css.map
+
+# Claude AI files (optional - remove if you want to track)
+.claude/
+
+# Theme config that may contain sensitive data
+config/settings_data.json

@@ -1,0 +1,125 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "contact_hero": {
+      "type": "contact-hero",
+      "settings": {
+        "title": "Get in Touch",
+        "subtitle": "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+      }
+    },
+    "contact_info_top": {
+      "type": "contact-info-top",
+      "blocks": {
+        "hours_1": {
+          "type": "hours",
+          "settings": {
+            "day": "Monday - Friday",
+            "time": "9:00 AM - 6:00 PM"
+          }
+        },
+        "hours_2": {
+          "type": "hours",
+          "settings": {
+            "day": "Saturday",
+            "time": "10:00 AM - 4:00 PM"
+          }
+        },
+        "hours_3": {
+          "type": "hours",
+          "settings": {
+            "day": "Sunday",
+            "time": "Closed"
+          }
+        },
+        "event_1": {
+          "type": "event",
+          "settings": {
+            "day": "15",
+            "month": "Mar",
+            "event_title": "Spring Collection Launch",
+            "description": "Discover our latest ceramic designs and spring-themed mugs",
+            "time": "10:00 AM - 6:00 PM"
+          }
+        },
+        "event_2": {
+          "type": "event",
+          "settings": {
+            "day": "22",
+            "month": "Mar",
+            "event_title": "DIY Mug Painting Workshop",
+            "description": "Create your own custom mug with our expert instructors",
+            "time": "2:00 PM - 4:00 PM"
+          }
+        },
+        "event_3": {
+          "type": "event",
+          "settings": {
+            "day": "05",
+            "month": "Apr",
+            "event_title": "Home Décor Styling Session",
+            "description": "Learn how to incorporate artisan cups into your home aesthetic",
+            "time": "11:00 AM - 1:00 PM"
+          }
+        }
+      },
+      "block_order": [
+        "hours_1",
+        "hours_2",
+        "hours_3",
+        "event_1",
+        "event_2",
+        "event_3"
+      ],
+      "settings": {
+        "hours_title": "Business Hours",
+        "events_title": "Upcoming Events"
+      }
+    },
+    "contact_form": {
+      "type": "contact-form",
+      "settings": {
+        "form_title": "Send us a Message",
+        "form_subtitle": "Fill out the form below and our team will get back to you within 24 hours.",
+        "success_message": "Thank you for contacting us! We'll get back to you soon.",
+        "info_title": "Contact Information",
+        "info_subtitle": "Reach out to us through any of these channels. We're here to help!",
+        "show_email": true,
+        "email_1": "hello@creativecups.com",
+        "email_2": "support@creativecups.com",
+        "show_phone": true,
+        "phone": "+1 (555) 123-4567",
+        "phone_hours": "Mon-Fri, 9am-6pm EST",
+        "show_address": true,
+        "address": "123 Design Street\nCreative District\nNew York, NY 10001\nUnited States"
+      }
+    },
+    "contact_social": {
+      "type": "contact-social",
+      "settings": {
+        "title": "Connect With Us",
+        "subtitle": "Follow us on social media for updates, inspiration, and exclusive offers",
+        "instagram_url": "https://instagram.com",
+        "facebook_url": "https://facebook.com",
+        "pinterest_url": "https://pinterest.com",
+        "twitter_url": "https://twitter.com",
+        "youtube_url": "",
+        "tiktok_url": ""
+      }
+    }
+  },
+  "order": [
+    "contact_hero",
+    "contact_info_top",
+    "contact_form",
+    "contact_social"
+  ]
+}

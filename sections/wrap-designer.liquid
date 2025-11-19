@@ -1,0 +1,351 @@
+{% comment %}
+  Wrap Design Addon Section
+  Allows customers to add wrap designs to their custom cups
+  Works similarly to cup product module with Shopify product integration
+{% endcomment %}
+
+<section class="wrap-designer">
+  <div class="container">
+    <div class="wrap-designer-header">
+      <h2 class="wrap-designer__title">{{ section.settings.title | default: 'Design Your Wrap' }}</h2>
+      <p class="wrap-designer__subtitle">{{ section.settings.subtitle | default: 'Select wrap products to customize your cup' }}</p>
+    </div>
+
+    <div class="wrap-designer-layout">
+      <!-- Left: Preview Area -->
+      <div class="wrap-preview-area">
+        <div class="wrap-preview-card">
+          <h3 class="wrap-preview-card__title">{{ section.settings.preview_title | default: 'Wrap Preview' }}</h3>
+          <div class="wrap-preview-container">
+            <div class="wrap-preview" id="wrap-preview">
+              <div class="wrap-image-wrapper">
+                {% if section.settings.default_wrap_image %}
+                  <div class="wrap-preview-layers">
+                    <img id="selected-wrap-image" class="wrap-preview-base" src="{{ section.settings.default_wrap_image | img_url: '600x600' }}" alt="Selected Wrap" />
+                    <div id="wrap-overlay" class="wrap-overlay-layer"></div>
+                  </div>
+                {% else %}
+                  <div id="selected-wrap-placeholder" class="wrap-preview-placeholder">
+                    <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                      <circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <p class="wrap-preview-placeholder__text">Select wrap products to preview</p>
+                  </div>
+                  <div class="wrap-preview-layers" style="display: none;">
+                    <img id="selected-wrap-image" class="wrap-preview-base" src="" alt="Selected Wrap" />
+                    <div id="wrap-overlay" class="wrap-overlay-layer"></div>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div class="wrap-preview-info">
+            <div class="wrap-price-display">
+              <span class="wrap-price-label">{{ section.settings.price_label | default: 'Total Wrap Price:' }}</span>
+              <span class="wrap-price-value" id="wrap-total-price">$0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Wrap Product Selection -->
+      <div class="wrap-options-area">
+        <div class="wrap-content">
+          <h3 class="wrap-section-title">{{ section.settings.selection_title | default: 'Select Your Wrap Products' }}</h3>
+          <p class="wrap-section-subtitle">{{ section.settings.selection_subtitle | default: 'Choose one or multiple wrap designs' }}</p>
+
+          <!-- Category Tabs -->
+          <div class="wrap-categories" id="wrap-product-categories">
+            <button class="wrap-category-tab active" data-category="all">
+              <span class="wrap-category-icon">🎨</span>
+              <span class="wrap-category-name">All Wraps</span>
+            </button>
+            {% assign wrap_categories = section.blocks | where: 'type', 'wrap_category' %}
+            {% for category in wrap_categories %}
+              <button class="wrap-category-tab" data-category="{{ category.settings.category_id }}">
+                <span class="wrap-category-icon">{{ category.settings.icon }}</span>
+                <span class="wrap-category-name">{{ category.settings.name }}</span>
+              </button>
+            {% endfor %}
+          </div>
+
+          <!-- Selected Wraps Display -->
+          <div class="selected-wrap-products" id="selected-wrap-products-display">
+            <div class="selected-wrap-products__header">
+              <h4 class="selected-wrap-products__title">Selected Wraps (<span id="selected-wrap-count">0</span>)</h4>
+              <button class="selected-wrap-products__clear" id="clear-wrap-products">Clear All</button>
+            </div>
+            <div class="selected-wrap-products__list" id="selected-wrap-products-list">
+              <p class="selected-wrap-products__empty">No wrap products selected yet</p>
+            </div>
+          </div>
+
+          <!-- Wrap Product Grid -->
+          <div class="wrap-product-grid" id="wrap-product-grid">
+            <!-- Products will be loaded dynamically from Shopify -->
+            <div class="loading-spinner">Loading wrap products...</div>
+          </div>
+
+          <div class="wrap-actions">
+            <button type="button" class="btn-add-wrap-to-cart" id="add-wrap-to-cart">
+              {{ section.settings.add_button_text | default: 'Add Wrap Design to Cart' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  window.wrapDesignerData = {
+    wrapProducts: [
+      {% for block in section.blocks %}
+        {% if block.type == 'wrap_product' and block.settings.product != blank %}
+          {
+            handle: "{{ block.settings.product | escape }}",
+            category: "{{ block.settings.category | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ],
+    categories: [
+      {% for block in section.blocks %}
+        {% if block.type == 'wrap_category' %}
+          {
+            id: "{{ block.settings.category_id | escape }}",
+            name: "{{ block.settings.name | escape }}",
+            icon: "{{ block.settings.icon | escape }}"
+          }{% unless forloop.last %},{% endunless %}
+        {% endif %}
+      {% endfor %}
+    ]
+  };
+</script>
+
+{% schema %}
+{
+  "name": "Wrap Designer Addon",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Main Section"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section Title",
+      "default": "Design Your Wrap"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Section Subtitle",
+      "default": "Select wrap products to customize your cup"
+    },
+    {
+      "type": "header",
+      "content": "Preview Section"
+    },
+    {
+      "type": "text",
+      "id": "preview_title",
+      "label": "Preview Title",
+      "default": "Wrap Preview"
+    },
+    {
+      "type": "image_picker",
+      "id": "default_wrap_image",
+      "label": "Default Wrap Image",
+      "info": "Optional: Shown in preview before customer selects wrap products"
+    },
+    {
+      "type": "text",
+      "id": "price_label",
+      "label": "Price Label",
+      "default": "Total Wrap Price:"
+    },
+    {
+      "type": "header",
+      "content": "Selection Section"
+    },
+    {
+      "type": "text",
+      "id": "selection_title",
+      "label": "Selection Title",
+      "default": "Select Your Wrap Products"
+    },
+    {
+      "type": "textarea",
+      "id": "selection_subtitle",
+      "label": "Selection Subtitle",
+      "default": "Choose one or multiple wrap designs"
+    },
+    {
+      "type": "text",
+      "id": "add_button_text",
+      "label": "Add to Cart Button",
+      "default": "Add Wrap Design to Cart"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "wrap_category",
+      "name": "📁 Wrap Category",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Create a category to organize your wrap products. Add this first, then add wrap products that belong to this category."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Category Display Name",
+          "default": "Quotes",
+          "info": "This name will be shown to customers. e.g., 'Quotes', 'Animals', 'Holidays'"
+        },
+        {
+          "type": "text",
+          "id": "category_id",
+          "label": "Category ID",
+          "default": "quotes",
+          "info": "IMPORTANT: Use lowercase letters only, no spaces. Replace spaces with hyphens. e.g., 'quotes', 'cute-animals', 'holidays'"
+        },
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Icon (Emoji)",
+          "default": "💬",
+          "placeholder": "💬",
+          "info": "Pick an emoji to represent this category. Copy/paste emoji here."
+        }
+      ]
+    },
+    {
+      "type": "wrap_product",
+      "name": "🎨 Wrap Product",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Add a wrap design product from your Shopify store. The product's title, price, image, and inventory will be pulled automatically from Shopify."
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Select Wrap Product",
+          "info": "Choose a Shopify product that represents this wrap design. Inventory will be managed automatically."
+        },
+        {
+          "type": "paragraph",
+          "content": "⚠️ CATEGORY MATCHING: Copy the exact Category ID from your Wrap Category blocks above."
+        },
+        {
+          "type": "select",
+          "id": "category",
+          "label": "Select Category",
+          "options": [
+            {
+              "value": "quotes-adult",
+              "label": "Quotes m/Adult"
+            },
+            {
+              "value": "mum",
+              "label": "Mum"
+            },
+            {
+              "value": "skulls",
+              "label": "Skulls"
+            },
+            {
+              "value": "lollies-sweets",
+              "label": "Lollies/Sweets"
+            },
+            {
+              "value": "evil-eye",
+              "label": "Evil Eye"
+            },
+            {
+              "value": "tattoo-girls",
+              "label": "Tattoo Girls"
+            },
+            {
+              "value": "bows",
+              "label": "Bows"
+            },
+            {
+              "value": "butterfly-flowers",
+              "label": "Butterfly/Flowers"
+            },
+            {
+              "value": "drink",
+              "label": "Drink"
+            },
+            {
+              "value": "horror-halloween",
+              "label": "Horror/Halloween"
+            },
+            {
+              "value": "christmas",
+              "label": "Christmas"
+            },
+            {
+              "value": "winnie-pooh",
+              "label": "Winnie the Pooh"
+            },
+            {
+              "value": "animals-insects",
+              "label": "Animals/Insects"
+            },
+            {
+              "value": "vehicles",
+              "label": "Vehicles"
+            },
+            {
+              "value": "occasions",
+              "label": "Occasions"
+            },
+            {
+              "value": "sea",
+              "label": "Sea"
+            },
+            {
+              "value": "fruit-veg",
+              "label": "Fruit/Veg"
+            },
+            {
+              "value": "autism",
+              "label": "Autism"
+            },
+            {
+              "value": "other",
+              "label": "Other"
+            },
+            {
+              "value": "custom",
+              "label": "Custom (enter below)"
+            }
+          ],
+          "default": "quotes-adult",
+          "info": "Select a category from the list, or choose 'Custom' to enter your own in the field below."
+        },
+        {
+          "type": "text",
+          "id": "category_custom",
+          "label": "Custom Category ID (if 'Custom' selected above)",
+          "placeholder": "e.g., space-theme, vintage",
+          "info": "Only fill this if you selected 'Custom' above. Must match your Wrap Category ID exactly (lowercase, no spaces)."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 999,
+  "presets": [
+    {
+      "name": "Wrap Designer Addon",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

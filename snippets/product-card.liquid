@@ -1,0 +1,89 @@
+{% comment %}
+  Product Card Snippet
+  Usage: {% render 'product-card', product: product %}
+{% endcomment %}
+
+{% comment %} Hide products tagged as custom-designer-only {% endcomment %}
+{% assign is_custom_cup = false %}
+{% for tag in product.tags %}
+  {% if tag == 'custom-designer-only' %}
+    {% assign is_custom_cup = true %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{% unless is_custom_cup %}
+<div class="product-card" data-product-id="{{ product.id }}">
+  <div class="product-card__image">
+    <a href="{{ product.url }}">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}" loading="lazy" />
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'product-card__placeholder' }}
+      {% endif %}
+    </a>
+
+    {% if product.compare_at_price > product.price %}
+      <span class="product-card__badge product-card__badge--sale">Sale</span>
+    {% endif %}
+
+    {% unless product.available %}
+      <span class="product-card__badge product-card__badge--sold-out">Sold Out</span>
+    {% endunless %}
+
+    <button class="product-card__wishlist" data-product-id="{{ product.id }}" aria-label="Add to wishlist">
+      <svg width="20" height="20" fill="none" stroke="currentColor">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="product-card__content">
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    {% if product.metafields.reviews.rating %}
+      <div class="product-card__rating">
+        <div class="product-card__stars">
+          {% assign rating = product.metafields.reviews.rating | times: 1.0 %}
+          {% for i in (1..5) %}
+            <svg class="product-card__star" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          {% endfor %}
+        </div>
+        <span class="product-card__rating-text">({{ product.metafields.reviews.count }})</span>
+      </div>
+    {% endif %}
+
+    <div class="product-card__price">
+      {% if product.compare_at_price > product.price %}
+        <span class="product-card__price--sale">{{ product.price | money }}</span>
+        <span class="product-card__price--compare">{{ product.compare_at_price | money }}</span>
+      {% else %}
+        <span>{{ product.price | money }}</span>
+      {% endif %}
+    </div>
+
+    <div class="product-card__actions">
+      {% if product.available %}
+        <button class="product-card__add-to-cart" data-product-id="{{ product.id }}" data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+          Add to Cart
+        </button>
+      {% else %}
+        <button class="product-card__add-to-cart" disabled>
+          Sold Out
+        </button>
+      {% endif %}
+
+      <button class="product-card__quick-view" data-product-id="{{ product.id }}" title="Quick View">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="12" cy="12" r="3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+{% endunless %}
