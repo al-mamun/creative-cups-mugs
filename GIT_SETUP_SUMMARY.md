@@ -23,8 +23,7 @@ Removed unnecessary files and folders:
 
 ### 3. Documentation Created
 - ✅ **README.md**: Comprehensive theme documentation
-- ✅ **CONTRIBUTORS.md**: Proper attribution for all contributors
-- ✅ **LICENSE**: MIT License with AI contribution notice
+- ✅ **LICENSE**: MIT License
 - ✅ **.gitignore**: Configured to ignore temporary and build files
 
 ### 4. Git Configuration
@@ -59,9 +58,8 @@ config/settings_data.json
   - 28,430 insertions
   - Complete theme structure
 
-- ✅ **Commit 2**: LICENSE and CONTRIBUTORS (c3436fe)
+- ✅ **Commit 2**: LICENSE file (c3436fe)
   - Added licensing information
-  - Proper contributor attribution
 
 ### 6. GitHub Connection
 - ✅ Remote added: `https://github.com/al-mamun/creative-cups-mugs.git`
@@ -75,8 +73,9 @@ creative-cups-mugs/
 ├── .git/                    # Git repository data
 ├── .gitignore              # Git ignore rules
 ├── README.md               # Main documentation
-├── CONTRIBUTORS.md         # Contributor credits
 ├── LICENSE                 # MIT License
+├── DEPLOYMENT.md           # Deployment guide
+├── GIT_SETUP_SUMMARY.md    # Git setup details
 ├── assets/                 # CSS, JS, images
 ├── config/                 # Theme settings
 ├── layout/                 # Theme layouts
@@ -88,19 +87,12 @@ creative-cups-mugs/
 └── screenshot.svg          # Theme icon
 ```
 
-## 🎯 Contributors Listed
+## 👨‍💻 Developer
 
-### Main Developer
-- Project owner and lead developer
-- Business logic and requirements
-- Quality assurance
-
-### Claude (AI Assistant)
-- Code implementation
-- 60+ bug fixes and optimizations
-- Mobile responsive design
-- Documentation
-- Repository setup
+**Mamun Dev Studios**
+- Website: https://mamundevstudios.com
+- Email: mamunstudios@gmail.com
+- GitHub: https://github.com/al-mamun
 
 ## 📊 Repository Statistics
 
@@ -187,11 +179,12 @@ MIT License - Open source and free to use
 
 ## 🤝 Contribution Guidelines
 
-See CONTRIBUTORS.md for:
-- How to contribute
-- Code standards
-- Pull request process
-- Contact information
+For contributions:
+- Follow existing code style and structure
+- Test on mobile and desktop
+- Ensure accessibility compliance
+- Submit pull requests with detailed descriptions
+- Contact: mamunstudios@gmail.com
 
 ---
 

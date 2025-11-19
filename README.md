@@ -189,16 +189,12 @@ Products should be tagged appropriately:
 
 ## 🤝 Contributing
 
-This theme was developed with contributions from:
-
-**Main Developer**: [Your Company/Name]
-**AI Assistant Contributor**: Claude (Anthropic)
-
 ### Development Guidelines
 - Follow existing code style and structure
 - Test on mobile and desktop
 - Ensure accessibility compliance
 - Document new features
+- Submit pull requests for review
 
 ## 📄 License
 
@@ -209,7 +205,7 @@ This theme is licensed under the MIT License - see the LICENSE file for details.
 For support and questions:
 - **Documentation**: See theme customizer help text
 - **Issues**: Report bugs via GitHub issues
-- **Email**: [your-support-email]
+- **Email**: mamunstudios@gmail.com
 
 ## 🔄 Changelog
 
@@ -232,9 +228,9 @@ For support and questions:
 ## 📞 Contact
 
 For business inquiries or custom development:
-- **Website**: [your-website]
-- **Email**: [your-email]
-- **GitHub**: [your-github]
+- **Website**: https://mamundevstudios.com
+- **Email**: mamunstudios@gmail.com
+- **GitHub**: https://github.com/al-mamun
 
 ---
 
