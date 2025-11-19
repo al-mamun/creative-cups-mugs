@@ -6,6 +6,35 @@
 ![Shopify](https://img.shields.io/badge/shopify-compatible-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-orange.svg)
 
+## 📖 About This Theme
+
+**Creative Cups & Mugs** is a professional, production-ready Shopify theme built from the ground up for businesses selling customizable drinkware products. Whether you're running a custom tumbler shop, personalized mug business, or creative drinkware store, this theme provides everything you need to showcase and sell your products online.
+
+### 🎯 Purpose
+
+This theme was created to solve the unique challenges of selling customizable cup and mug products online:
+- **Visual Customization**: Customers need to see what their custom design looks like before purchasing
+- **Multiple Options**: Easy selection from hundreds of wrap designs, styles, and textures
+- **Mobile Shopping**: Most customers browse on mobile devices, requiring perfect mobile optimization
+- **Professional Design**: Stand out with a modern, teal-themed aesthetic that matches drinkware aesthetics
+
+### 💼 Ideal For
+
+- Custom tumbler businesses
+- Personalized mug shops
+- Print-on-demand drinkware stores
+- Small to medium e-commerce businesses
+- Entrepreneurs in the custom drinkware industry
+- Businesses offering design-your-own product experiences
+
+### 🌟 What Makes It Special
+
+1. **Custom Product Designer**: Built-in interactive designer that lets customers create their perfect cup
+2. **60+ Optimizations**: Carefully crafted with 60+ fixes for performance, mobile responsiveness, and user experience
+3. **No Third-Party Apps Required**: All customization features built directly into the theme
+4. **Mobile-First Design**: Perfect experience on phones, tablets, and desktops
+5. **Easy to Customize**: Well-organized code with clear documentation for easy modifications
+
 ## 🎨 Theme Overview
 
 Creative Cups & Mugs is a professional Shopify theme designed specifically for businesses selling customizable drinkware. It features a powerful custom designer tool that allows customers to create their own unique cup designs with wraps, styles, and textures.
