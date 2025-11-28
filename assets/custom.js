@@ -102,30 +102,209 @@ function generateDynamicCategoryTabs(products) {
   }
 }
 
-// Get emoji icon for category
+// Get emoji icon for category - UNLIMITED CATEGORIES SUPPORTED
 function getCategoryIcon(category) {
   const icons = {
+    // Animals & Creatures
     'animals': '🐾',
+    'cats': '🐱',
+    'dogs': '🐶',
+    'birds': '🦜',
+    'wildlife': '🦁',
+    'ocean': '🐋',
+    'butterflies': '🦋',
+    'dinosaurs': '🦖',
+    'farm': '🐄',
+    'pets': '🐕',
+
+    // Quotes & Text
     'quotes': '💬',
     'quotes-adult': '🔞',
+    'inspirational': '💭',
+    'funny': '😂',
+    'love': '💕',
+    'motivational': '💪',
+    'sarcastic': '😏',
+
+    // Holidays & Seasons
     'holidays': '🎄',
+    'christmas': '🎅',
+    'halloween': '🎃',
+    'easter': '🐰',
+    'valentines': '💝',
+    'thanksgiving': '🦃',
+    'new-year': '🎆',
+    'birthday': '🎂',
+    'summer': '☀️',
+    'winter': '❄️',
+    'spring': '🌱',
+    'fall': '🍂',
+    'autumn': '🍁',
+
+    // Patterns & Designs
     'patterns': '🎨',
     'floral': '🌸',
-    'sports': '⚽',
-    'music': '🎵',
-    'food': '🍕',
-    'nature': '🌿',
-    'abstract': '✨',
     'geometric': '🔷',
+    'stripes': '📏',
+    'dots': '⚫',
+    'abstract': '✨',
+    'mandala': '🔯',
+    'paisley': '🌀',
+    'chevron': '📐',
+    'damask': '🎭',
+
+    // Sports & Activities
+    'sports': '⚽',
+    'football': '🏈',
+    'basketball': '🏀',
+    'baseball': '⚾',
+    'soccer': '⚽',
+    'tennis': '🎾',
+    'golf': '⛳',
+    'fitness': '💪',
+    'yoga': '🧘',
+    'dancing': '💃',
+    'gaming': '🎮',
+
+    // Music & Entertainment
+    'music': '🎵',
+    'rock': '🎸',
+    'classical': '🎻',
+    'jazz': '🎺',
+    'movies': '🎬',
+    'theater': '🎭',
+    'reading': '📚',
+
+    // Food & Drinks
+    'food': '🍕',
+    'coffee': '☕',
+    'tea': '🍵',
+    'wine': '🍷',
+    'desserts': '🍰',
+    'fruits': '🍎',
+    'vegetables': '🥕',
+    'pizza': '🍕',
+    'burgers': '🍔',
+    'tacos': '🌮',
+    'donuts': '🍩',
+    'ice-cream': '🍦',
+    'candy': '🍬',
+    'lollies': '🍭',
+    'sweets': '🍬',
+
+    // Nature & Outdoors
+    'nature': '🌿',
+    'flowers': '🌺',
+    'trees': '🌳',
+    'garden': '🌻',
+    'mountains': '⛰️',
+    'beach': '🏖️',
+    'sunset': '🌅',
+    'stars': '⭐',
+    'moon': '🌙',
+    'sun': '☀️',
+
+    // Textures & Materials
     'glitter': '✨',
     'marble': '🪨',
     'wood': '🪵',
     'metallic': '⚡',
     'pastel': '🎀',
     'neon': '💡',
-    'galaxy': '🌌',
-    'rainbow': '🌈'
+    'gold': '🏆',
+    'silver': '🥈',
+    'rose-gold': '🌹',
+    'lava': '🌋',
+    'honey': '🍯',
+    'holographic': '🌈',
+    'shimmer': '✨',
+    'matte': '⚫',
+    'glossy': '💎',
+
+    // Colors
+    'rainbow': '🌈',
+    'pink': '💗',
+    'blue': '💙',
+    'purple': '💜',
+    'green': '💚',
+    'yellow': '💛',
+    'orange': '🧡',
+    'red': '❤️',
+    'black': '🖤',
+    'white': '🤍',
+    'multi-color': '🎨',
+
+    // Professions & Hobbies
+    'nurse': '👩‍⚕️',
+    'doctor': '👨‍⚕️',
+    'teacher': '👩‍🏫',
+    'artist': '👨‍🎨',
+    'chef': '👨‍🍳',
+    'crafts': '✂️',
+    'sewing': '🧵',
+    'knitting': '🧶',
+    'gardening': '👩‍🌾',
+
+    // Family & Relationships
+    'mum': '👩',
+    'mom': '👩',
+    'dad': '👨',
+    'baby': '👶',
+    'kids': '👧',
+    'family': '👨‍👩‍👧‍👦',
+    'grandma': '👵',
+    'grandpa': '👴',
+    'sister': '👭',
+    'brother': '👬',
+
+    // Themes & Styles
+    'vintage': '📻',
+    'retro': '📼',
+    'modern': '🔲',
+    'rustic': '🪵',
+    'boho': '🌾',
+    'minimalist': '⬜',
+    'elegant': '👑',
+    'cute': '🥰',
+    'kawaii': '😊',
+    'gothic': '🦇',
+    'skulls': '💀',
+    'tribal': '🗿',
+
+    // Symbols & Icons
+    'hearts': '❤️',
+    'stars': '⭐',
+    'crowns': '👑',
+    'diamonds': '💎',
+    'flags': '🚩',
+    'zodiac': '♈',
+    'astrology': '🔮',
+    'spiritual': '🕉️',
+    'religious': '✝️',
+
+    // Travel & Places
+    'travel': '✈️',
+    'beach': '🏖️',
+    'city': '🏙️',
+    'camping': '⛺',
+    'adventure': '🧭',
+    'world': '🌍',
+    'usa': '🇺🇸',
+    'paris': '🗼',
+
+    // Misc Categories
+    'custom': '🎨',
+    'other': '🎨',
+    'new': '🆕',
+    'popular': '🔥',
+    'trending': '📈',
+    'bestseller': '🏆',
+    'limited': '⚡',
+    'exclusive': '💎'
   };
+
+  // Return matching icon or default 🎨
+  // This supports UNLIMITED categories - any tag will work even without a custom icon
   return icons[category.toLowerCase()] || '🎨';
 }
 
