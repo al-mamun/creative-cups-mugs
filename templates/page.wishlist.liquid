@@ -382,13 +382,34 @@ text-align: center;
 
     // Load and display wishlist items
     async function loadWishlist() {
-      // Get wishlist items from localStorage
-      const storedItems = localStorage.getItem('wishlistItems');
+      // Check both localStorage keys
+      const storedItemsRaw = localStorage.getItem('wishlistItems');
+      const storedWishlistRaw = localStorage.getItem('wishlist');
 
-      console.log('Raw wishlistItems from localStorage:', storedItems);
+      console.log('Raw wishlistItems from localStorage:', storedItemsRaw);
+      console.log('Raw wishlist from localStorage:', storedWishlistRaw);
 
-      if (!storedItems) {
-        console.log('No wishlistItems found in localStorage');
+      // Try wishlistItems first (preferred - has full product data)
+      if (storedItemsRaw) {
+        try {
+          const items = JSON.parse(storedItemsRaw);
+          console.log('Parsed wishlistItems:', items);
+
+          if (Array.isArray(items) && items.length > 0) {
+            // Use the stored items directly
+            const products = items;
+            console.log('Using products from wishlistItems:', products);
+            renderWishlistProducts(products);
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing wishlistItems:', e);
+        }
+      }
+
+      // Fallback to wishlist array (just IDs/handles - need to fetch product data)
+      if (!storedWishlistRaw) {
+        console.log('No wishlist data found in localStorage');
         wishlistGrid.style.display = 'none';
         wishlistEmpty.style.display = 'flex';
         if (wishlistHeader) wishlistHeader.style.display = 'none';
@@ -396,20 +417,21 @@ text-align: center;
       }
 
       try {
-        const items = JSON.parse(storedItems);
-        console.log('Parsed wishlistItems:', items);
+        const wishlistIds = JSON.parse(storedWishlistRaw);
+        console.log('Parsed wishlist IDs:', wishlistIds);
 
-        if (!Array.isArray(items) || items.length === 0) {
-          console.log('WishlistItems is empty or not an array');
+        if (!Array.isArray(wishlistIds) || wishlistIds.length === 0) {
+          console.log('Wishlist is empty');
           wishlistGrid.style.display = 'none';
           wishlistEmpty.style.display = 'flex';
           if (wishlistHeader) wishlistHeader.style.display = 'none';
           return;
         }
 
-        // Use the stored items directly - they already have all the data we need
-        const products = items;
-        console.log('Using products from wishlistItems:', products);
+        // Fetch products from Shopify by ID
+        console.log('Fetching products by IDs...');
+        const products = await fetchProductsByIds(wishlistIds);
+        console.log('Fetched products:', products);
 
         if (products.length === 0) {
           wishlistGrid.style.display = 'none';
@@ -418,66 +440,7 @@ text-align: center;
           return;
         }
 
-        // Update header
-        if (wishlistHeader) wishlistHeader.style.display = 'flex';
-        if (wishlistItemsCount) wishlistItemsCount.textContent = products.length;
-
-        // Normalize product data - wishlistItems format from main.js
-        const normalized = products.map(p => {
-          console.log('Normalizing product:', p);
-
-          return {
-            id: p.id,
-            title: p.name || p.title || 'Product',
-            featured_image: p.image || p.featured_image || '',
-            url: p.url || '#',
-            price: p.price || 0,
-            variantId: p.variantId || p.id,
-            available: p.inStock !== false
-          };
-        });
-
-        // Render products
-        wishlistGrid.innerHTML = normalized.map(product => `
-          <div class="product-card" data-product-id="${product.id}">
-            <div class="product-card__image">
-              <a href="${product.url}">
-                <img src="${product.featured_image || '{{ "product-placeholder.png" | asset_url }}'}" 
-                     alt="${product.title}" 
-                     loading="lazy">
-              </a>
-              <button class="product-card__wishlist active" 
-                      onclick="removeFromWishlist('${product.id}')"
-                      title="Remove from wishlist">
-                <svg width="18" height="18" fill="currentColor" stroke="currentColor">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-              </button>
-            </div>
-            <div class="product-card__content">
-              <h3 class="product-card__title">
-                <a href="${product.url}">${product.title}</a>
-              </h3>
-              <div class="product-card__price">
-                ${formatMoney(product.price)}
-              </div>
-              <div class="product-card__actions">
-                <button class="btn btn-primary btn-small" 
-                        onclick="addToCart(${product.variantId})"
-                        ${!product.available ? 'disabled' : ''}>
-                  ${product.available ? 'Add to Cart' : 'Sold Out'}
-                </button>
-                <button class="btn btn-outline btn-small" 
-                        onclick="removeFromWishlist('${product.id}')">
-                  Remove
-                </button>
-              </div>
-            </div>
-          </div>
-        `).join('');
-
-        // Save normalized items
-        setWishlistItems(normalized);
+        renderWishlistProducts(products);
 
       } catch (error) {
         console.error('Error loading wishlist:', error);
@@ -490,6 +453,109 @@ text-align: center;
             </small>
           </div>`;
       }
+    }
+
+    // Fetch products by their IDs from all products
+    async function fetchProductsByIds(ids) {
+      try {
+        // Fetch all products
+        const response = await fetch('/products.json?limit=250');
+        if (!response.ok) throw new Error('Failed to fetch products');
+
+        const data = await response.json();
+        const allProducts = data.products;
+
+        console.log('All products from API:', allProducts.length);
+
+        // Match by ID
+        const products = ids.map(id => {
+          return allProducts.find(p => String(p.id) === String(id));
+        }).filter(Boolean);
+
+        console.log('Matched products:', products);
+        return products;
+
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        return [];
+      }
+    }
+
+    // Render wishlist products
+    function renderWishlistProducts(products) {
+      if (products.length === 0) {
+        wishlistGrid.style.display = 'none';
+        wishlistEmpty.style.display = 'flex';
+        if (wishlistHeader) wishlistHeader.style.display = 'none';
+        return;
+      }
+
+      // Update header
+      wishlistGrid.style.display = 'grid';
+      wishlistEmpty.style.display = 'none';
+      if (wishlistHeader) wishlistHeader.style.display = 'flex';
+      if (wishlistItemsCount) wishlistItemsCount.textContent = products.length;
+
+      // Normalize product data - handle both Shopify API and wishlistItems format
+      const normalized = products.map(p => {
+        console.log('Normalizing product:', p);
+
+        // Get variant for Shopify API format
+        const variant = p.variants?.[0] || {};
+        const image = p.images?.[0] || p.image || {};
+
+        return {
+          id: p.id,
+          title: p.title || p.name || 'Product',
+          featured_image: image.src || p.featured_image || p.image || '',
+          url: p.url || `/products/${p.handle || ''}`,
+          price: variant.price || p.price || 0,
+          variantId: variant.id || p.variantId || p.id,
+          available: (variant.available !== false) && (p.inStock !== false)
+        };
+      });
+
+      // Render products
+      wishlistGrid.innerHTML = normalized.map(product => `
+        <div class="product-card" data-product-id="${product.id}">
+          <div class="product-card__image">
+            <a href="${product.url}">
+              <img src="${product.featured_image || '{{ "product-placeholder.png" | asset_url }}'}"
+                   alt="${product.title}"
+                   loading="lazy">
+            </a>
+            <button class="product-card__wishlist active"
+                    onclick="removeFromWishlist('${product.id}')"
+                    title="Remove from wishlist">
+              <svg width="18" height="18" fill="currentColor" stroke="currentColor">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </button>
+          </div>
+          <div class="product-card__content">
+            <h3 class="product-card__title">
+              <a href="${product.url}">${product.title}</a>
+            </h3>
+            <div class="product-card__price">
+              ${formatMoney(product.price)}
+            </div>
+            <div class="product-card__actions">
+              <button class="btn btn-primary btn-small"
+                      onclick="addToCart(${product.variantId})"
+                      ${!product.available ? 'disabled' : ''}>
+                ${product.available ? 'Add to Cart' : 'Sold Out'}
+              </button>
+              <button class="btn btn-outline btn-small"
+                      onclick="removeFromWishlist('${product.id}')">
+                Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Save normalized items
+      setWishlistItems(normalized);
     }
 
     // Format money helper - handles both cents and dollars
