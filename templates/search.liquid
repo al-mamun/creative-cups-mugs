@@ -24,10 +24,9 @@
 <section class="section search-results-section">
   <div class="container">
     {% paginate search.results by 24 %}
-      
-      {% assign product_results = paginate.items | where: "object_type", "product" %}
-      
-      {% if search.performed and product_results.size > 0 %}
+
+      {% comment %} Show all search results, not just products {% endcomment %}
+      {% if search.performed and search.results.size > 0 %}
         
         <div class="search-toolbar">
           <div class="search-count">
@@ -38,11 +37,9 @@
         </div>
 
         <div class="products-grid">
-          {% for item in product_results %}
-            {% assign p = item %}
-            
-            {% comment %} Check if a product object exists for safety {% endcomment %}
-            {% if p.title %}
+          {% for item in search.results %}
+            {% if item.object_type == 'product' %}
+              {% assign p = item %}
               <article class="product-card">
                 <a href="{{ p.url }}" class="product-card__media">
                   {% if p.featured_image %}
