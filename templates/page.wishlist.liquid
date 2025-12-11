@@ -272,8 +272,23 @@ text-align: center;
       return;
     }
 
-    // Get wishlist (simple handles array)
+    // Get wishlist (simple handles/IDs array)
     function getWishlist() {
+      // Try wishlistItems first (full objects) - preferred format
+      const wishlistItems = localStorage.getItem('wishlistItems');
+      if (wishlistItems) {
+        try {
+          const items = JSON.parse(wishlistItems);
+          // If it's an array of objects with handles or IDs, extract them
+          if (Array.isArray(items) && items.length > 0 && typeof items[0] === 'object') {
+            return items.map(item => item.handle || item.id || item).filter(Boolean);
+          }
+        } catch (e) {
+          console.error('Error parsing wishlistItems:', e);
+        }
+      }
+
+      // Fallback to simple wishlist array
       const wishlist = localStorage.getItem('wishlist');
       return wishlist ? JSON.parse(wishlist) : [];
     }
@@ -367,40 +382,58 @@ text-align: center;
 
     // Load and display wishlist items
     async function loadWishlist() {
-      let wishlist = getWishlist();
-      console.log('Initial wishlist handles:', wishlist);
-
-      if (wishlist.length === 0) {
-        wishlistGrid.style.display = 'none';
-        wishlistEmpty.style.display = 'flex';
-        if (wishlistHeader) wishlistHeader.style.display = 'none';
-        return;
-      }
+      // First, check if we have full product data in wishlistItems
+      const storedItems = localStorage.getItem('wishlistItems');
+      let products = [];
 
       try {
-        // Fetch products individually by handle/ID for better accuracy
-        const productPromises = wishlist.map(async (item) => {
-          try {
-            // Extract handle from various formats
-            const handle = String(item).replace(/^\/products\//, '').replace(/^\/?/, '');
+        if (storedItems) {
+          const items = JSON.parse(storedItems);
+          console.log('WishlistItems from localStorage:', items);
 
-            // Try fetching by handle first
-            const response = await fetch(`/products/${handle}.js`);
-            if (response.ok) {
-              return await response.json();
-            }
-
-            // If that fails, the item might be invalid
-            console.warn(`Could not fetch product: ${handle}`);
-            return null;
-          } catch (err) {
-            console.error(`Error fetching product ${item}:`, err);
-            return null;
+          // If items are already full product objects with required data, use them
+          if (Array.isArray(items) && items.length > 0 && typeof items[0] === 'object' && items[0].id) {
+            products = items;
+            console.log('Using stored product objects:', products);
           }
-        });
+        }
 
-        const products = (await Promise.all(productPromises)).filter(Boolean);
-        console.log('Fetched wishlist products:', products);
+        // If we don't have products yet, fetch by handles
+        if (products.length === 0) {
+          let wishlist = getWishlist();
+          console.log('Wishlist handles/IDs:', wishlist);
+
+          if (wishlist.length === 0) {
+            wishlistGrid.style.display = 'none';
+            wishlistEmpty.style.display = 'flex';
+            if (wishlistHeader) wishlistHeader.style.display = 'none';
+            return;
+          }
+
+          // Fetch products individually by handle/ID for better accuracy
+          const productPromises = wishlist.map(async (item) => {
+            try {
+              // Extract handle from various formats
+              const handle = String(item).replace(/^\/products\//, '').replace(/^\/?/, '');
+
+              // Try fetching by handle first
+              const response = await fetch(`/products/${handle}.js`);
+              if (response.ok) {
+                return await response.json();
+              }
+
+              // If that fails, the item might be invalid
+              console.warn(`Could not fetch product: ${handle}`);
+              return null;
+            } catch (err) {
+              console.error(`Error fetching product ${item}:`, err);
+              return null;
+            }
+          });
+
+          products = (await Promise.all(productPromises)).filter(Boolean);
+          console.log('Fetched wishlist products:', products);
+        }
 
         if (products.length === 0) {
           wishlistGrid.style.display = 'none';
@@ -413,18 +446,21 @@ text-align: center;
         if (wishlistHeader) wishlistHeader.style.display = 'flex';
         if (wishlistItemsCount) wishlistItemsCount.textContent = products.length;
 
-        // Normalize product data with proper checks
+        // Normalize product data with proper checks for both formats
         const normalized = products.map(p => {
-          const variant = p.variants?.[0] || {};
+          // Handle both wishlistItems format and Shopify API format
+          const variant = p.variants?.[0] || p.variant || {};
           const image = p.images?.[0] || {};
+          const productHandle = p.handle || (p.url && p.url.split('/').pop()) || '';
+
           return {
             id: p.id,
-            handle: p.handle,
-            title: p.title,
-            featured_image: image.src || p.featured_image,
-            url: `/products/${p.handle}`,
-            price: variant.price || 0,
-            variantId: variant.id,
+            handle: productHandle,
+            title: p.title || p.name || 'Product',
+            featured_image: image.src || p.featured_image || p.image || '',
+            url: p.url || `/products/${productHandle}`,
+            price: variant.price || p.price || 0,
+            variantId: variant.id || p.variantId || p.id,
             available: variant.available !== false
           };
         });
