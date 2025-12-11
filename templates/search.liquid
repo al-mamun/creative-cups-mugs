@@ -30,10 +30,10 @@
         
         <div class="search-toolbar">
           <div class="search-count">
-            <strong>{{ paginate.items_count }}</strong> result{{ paginate.items_count | pluralize }}
-            {% if search.terms != blank %} for “{{ search.terms }}”{% endif %}
+            <strong>{{ paginate.items_count }}</strong>
+            {% if paginate.items_count == 1 %}result{% else %}results{% endif %}
+            {% if search.terms != blank %} for "{{ search.terms }}"{% endif %}
           </div>
-          {% render 'pagination', paginate: paginate %}
         </div>
 
         <div class="products-grid">
@@ -85,9 +85,29 @@
           {% endfor %}
         </div>
         
-        <div class="pagination-bottom-wrapper">
-          {% render 'pagination', paginate: paginate %}
-        </div>
+        {% if paginate.pages > 1 %}
+          <div class="pagination-bottom-wrapper">
+            <nav class="custom-pagination" aria-label="Pagination">
+              {% if paginate.previous %}
+                <a href="{{ paginate.previous.url }}" class="page-link prev-next">Prev</a>
+              {% endif %}
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="page-link">{{ part.title }}</a>
+                {% else %}
+                  {% if part.title == paginate.current_page %}
+                    <span class="page-link active" aria-current="page">{{ part.title }}</span>
+                  {% else %}
+                    <span class="page-link dots">...</span>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+              {% if paginate.next %}
+                <a href="{{ paginate.next.url }}" class="page-link prev-next">Next</a>
+              {% endif %}
+            </nav>
+          </div>
+        {% endif %}
 
       {% else %}
         {% comment %} No results or initial state message {% endcomment %}
@@ -109,33 +129,6 @@
   </div>
 </section>
 
-{% comment %}
-  PAGINATION SNIPPET (pagination.liquid) - Required for rendering
-  If you don't have a snippet, include this code:
-{% endcomment %}
-<div class="visually-hidden">
-{% if paginate.pages > 1 %}
-  <nav class="custom-pagination" aria-label="Pagination">
-    {% if paginate.previous %}
-      <a href="{{ paginate.previous.url }}" class="page-link prev-next">Prev</a>
-    {% endif %}
-    {% for part in paginate.parts %}
-      {% if part.is_link %}
-        <a href="{{ part.url }}" class="page-link">{{ part.title }}</a>
-      {% else %}
-        {% if part.title == paginate.current_page %}
-          <span class="page-link active" aria-current="page">{{ part.title }}</span>
-        {% else %}
-          <span class="page-link dots">...</span>
-        {% endif %}
-      {% endif %}
-    {% endfor %}
-    {% if paginate.next %}
-      <a href="{{ paginate.next.url }}" class="page-link prev-next">Next</a>
-    {% endif %}
-  </nav>
-{% endif %}
-</div>
 
 
 <style>
