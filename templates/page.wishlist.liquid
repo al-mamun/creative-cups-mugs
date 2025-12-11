@@ -382,58 +382,34 @@ text-align: center;
 
     // Load and display wishlist items
     async function loadWishlist() {
-      // First, check if we have full product data in wishlistItems
+      // Get wishlist items from localStorage
       const storedItems = localStorage.getItem('wishlistItems');
-      let products = [];
+
+      console.log('Raw wishlistItems from localStorage:', storedItems);
+
+      if (!storedItems) {
+        console.log('No wishlistItems found in localStorage');
+        wishlistGrid.style.display = 'none';
+        wishlistEmpty.style.display = 'flex';
+        if (wishlistHeader) wishlistHeader.style.display = 'none';
+        return;
+      }
 
       try {
-        if (storedItems) {
-          const items = JSON.parse(storedItems);
-          console.log('WishlistItems from localStorage:', items);
+        const items = JSON.parse(storedItems);
+        console.log('Parsed wishlistItems:', items);
 
-          // If items are already full product objects with required data, use them
-          if (Array.isArray(items) && items.length > 0 && typeof items[0] === 'object' && items[0].id) {
-            products = items;
-            console.log('Using stored product objects:', products);
-          }
+        if (!Array.isArray(items) || items.length === 0) {
+          console.log('WishlistItems is empty or not an array');
+          wishlistGrid.style.display = 'none';
+          wishlistEmpty.style.display = 'flex';
+          if (wishlistHeader) wishlistHeader.style.display = 'none';
+          return;
         }
 
-        // If we don't have products yet, fetch by handles
-        if (products.length === 0) {
-          let wishlist = getWishlist();
-          console.log('Wishlist handles/IDs:', wishlist);
-
-          if (wishlist.length === 0) {
-            wishlistGrid.style.display = 'none';
-            wishlistEmpty.style.display = 'flex';
-            if (wishlistHeader) wishlistHeader.style.display = 'none';
-            return;
-          }
-
-          // Fetch products individually by handle/ID for better accuracy
-          const productPromises = wishlist.map(async (item) => {
-            try {
-              // Extract handle from various formats
-              const handle = String(item).replace(/^\/products\//, '').replace(/^\/?/, '');
-
-              // Try fetching by handle first
-              const response = await fetch(`/products/${handle}.js`);
-              if (response.ok) {
-                return await response.json();
-              }
-
-              // If that fails, the item might be invalid
-              console.warn(`Could not fetch product: ${handle}`);
-              return null;
-            } catch (err) {
-              console.error(`Error fetching product ${item}:`, err);
-              return null;
-            }
-          });
-
-          products = (await Promise.all(productPromises)).filter(Boolean);
-          console.log('Fetched wishlist products:', products);
-        }
+        // Use the stored items directly - they already have all the data we need
+        const products = items;
+        console.log('Using products from wishlistItems:', products);
 
         if (products.length === 0) {
           wishlistGrid.style.display = 'none';
@@ -446,22 +422,18 @@ text-align: center;
         if (wishlistHeader) wishlistHeader.style.display = 'flex';
         if (wishlistItemsCount) wishlistItemsCount.textContent = products.length;
 
-        // Normalize product data with proper checks for both formats
+        // Normalize product data - wishlistItems format from main.js
         const normalized = products.map(p => {
-          // Handle both wishlistItems format and Shopify API format
-          const variant = p.variants?.[0] || p.variant || {};
-          const image = p.images?.[0] || {};
-          const productHandle = p.handle || (p.url && p.url.split('/').pop()) || '';
+          console.log('Normalizing product:', p);
 
           return {
             id: p.id,
-            handle: productHandle,
-            title: p.title || p.name || 'Product',
-            featured_image: image.src || p.featured_image || p.image || '',
-            url: p.url || `/products/${productHandle}`,
-            price: variant.price || p.price || 0,
-            variantId: variant.id || p.variantId || p.id,
-            available: variant.available !== false
+            title: p.name || p.title || 'Product',
+            featured_image: p.image || p.featured_image || '',
+            url: p.url || '#',
+            price: p.price || 0,
+            variantId: p.variantId || p.id,
+            available: p.inStock !== false
           };
         });
 
@@ -520,9 +492,22 @@ text-align: center;
       }
     }
 
-    // Format money helper (cents)
-    function formatMoney(cents) {
-      if (typeof cents === 'number') return '$' + (cents / 100).toFixed(2);
+    // Format money helper - handles both cents and dollars
+    function formatMoney(price) {
+      if (typeof price === 'number') {
+        // If price is less than 100, it's likely already in dollars
+        if (price < 100) {
+          return '$' + price.toFixed(2);
+        }
+        // Otherwise it's in cents
+        return '$' + (price / 100).toFixed(2);
+      }
+      if (typeof price === 'string') {
+        const num = parseFloat(price);
+        if (!isNaN(num)) {
+          return '$' + num.toFixed(2);
+        }
+      }
       return '$0.00';
     }
 
