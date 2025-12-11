@@ -370,40 +370,37 @@ text-align: center;
       let wishlist = getWishlist();
       console.log('Initial wishlist handles:', wishlist);
 
+      if (wishlist.length === 0) {
+        wishlistGrid.style.display = 'none';
+        wishlistEmpty.style.display = 'flex';
+        if (wishlistHeader) wishlistHeader.style.display = 'none';
+        return;
+      }
+
       try {
-        // Fetch all products first
-        const allProductsResponse = await fetch('/products.json');
-        if (!allProductsResponse.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        
-        const allProducts = await allProductsResponse.json();
-        console.log('All products:', allProducts);
+        // Fetch products individually by handle/ID for better accuracy
+        const productPromises = wishlist.map(async (item) => {
+          try {
+            // Extract handle from various formats
+            const handle = String(item).replace(/^\/products\//, '').replace(/^\/?/, '');
 
-        // Match wishlist items with products (support ID, handle, or variant ID)
-        const products = wishlist
-          .map(item => {
-            // Try matching by product ID first
-            let product = allProducts.products.find(p => String(p.id) === String(item));
-
-            // If not found, try matching by handle
-            if (!product) {
-              const handle = String(item).replace(/^\/products\//, '').replace(/^\/?/, '');
-              product = allProducts.products.find(p => p.handle === handle);
+            // Try fetching by handle first
+            const response = await fetch(`/products/${handle}.js`);
+            if (response.ok) {
+              return await response.json();
             }
 
-            // If not found, try matching by variant ID
-            if (!product) {
-              product = allProducts.products.find(p =>
-                p.variants && p.variants.some(v => String(v.id) === String(item))
-              );
-            }
+            // If that fails, the item might be invalid
+            console.warn(`Could not fetch product: ${handle}`);
+            return null;
+          } catch (err) {
+            console.error(`Error fetching product ${item}:`, err);
+            return null;
+          }
+        });
 
-            return product;
-          })
-          .filter(Boolean);
-
-        console.log('Matched wishlist products:', products);
+        const products = (await Promise.all(productPromises)).filter(Boolean);
+        console.log('Fetched wishlist products:', products);
 
         if (products.length === 0) {
           wishlistGrid.style.display = 'none';
