@@ -458,54 +458,6 @@ function initializeStyleCategoryFiltering() {
   }
 }
 
-// Initialize style selection
-function initializeStyleSelection() {
-  const styleGallery = document.getElementById("style-gallery");
-  if (!styleGallery) return;
-
-  styleGallery.addEventListener("click", (e) => {
-    const selectBtn = e.target.closest(".style-item__select");
-    if (!selectBtn) return;
-
-    const styleItem = selectBtn.closest(".style-item");
-    const styleId = selectBtn.dataset.styleId;
-    const styleTitle = selectBtn.dataset.styleTitle;
-    const stylePrice = parseFloat(selectBtn.dataset.stylePrice);
-
-    // Get style image - try dataset first, then img element
-    let styleImage = selectBtn.dataset.styleImage || "";
-    if (!styleImage) {
-      const imgElement = styleItem.querySelector(".style-item__image img");
-      styleImage = imgElement ? imgElement.src : "";
-    }
-
-    // Toggle selection
-    const index = customization.selectedStyles.findIndex(
-      (s) => s.id === styleId
-    );
-
-    if (index > -1) {
-      // Remove
-      customization.selectedStyles.splice(index, 1);
-      styleItem.classList.remove("selected");
-    } else {
-      // Add
-      customization.selectedStyles.push({
-        id: styleId,
-        title: styleTitle,
-        price: stylePrice,
-        image: styleImage,
-      });
-      styleItem.classList.add("selected");
-    }
-
-    updateSelectedStylesDisplay();
-    updatePreviewSummary();
-    updatePrice();
-    updatePreview();
-  });
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   // State
   let currentStep = 1;
@@ -1407,6 +1359,54 @@ document.addEventListener("DOMContentLoaded", () => {
         updatePreview();
       });
     }
+  }
+
+  // Initialize style selection with event delegation
+  function initializeStyleSelection() {
+    const styleGallery = document.getElementById("style-gallery");
+    if (!styleGallery) return;
+
+    styleGallery.addEventListener("click", (e) => {
+      const selectBtn = e.target.closest(".style-item__select");
+      if (!selectBtn) return;
+
+      const styleItem = selectBtn.closest(".style-item");
+      const styleId = selectBtn.dataset.styleId;
+      const styleTitle = selectBtn.dataset.styleTitle;
+      const stylePrice = parseFloat(selectBtn.dataset.stylePrice);
+
+      // Get style image - try dataset first, then img element
+      let styleImage = selectBtn.dataset.styleImage || "";
+      if (!styleImage) {
+        const imgElement = styleItem.querySelector(".style-item__image img");
+        styleImage = imgElement ? imgElement.src : "";
+      }
+
+      // Toggle selection
+      const index = customization.selectedStyles.findIndex(
+        (s) => s.id === styleId
+      );
+
+      if (index > -1) {
+        // Remove
+        customization.selectedStyles.splice(index, 1);
+        styleItem.classList.remove("selected");
+      } else {
+        // Add
+        customization.selectedStyles.push({
+          id: styleId,
+          title: styleTitle,
+          price: stylePrice,
+          image: styleImage,
+        });
+        styleItem.classList.add("selected");
+      }
+
+      updateSelectedStylesDisplay();
+      updatePreviewSummary();
+      updatePrice();
+      updatePreview();
+    });
   }
 
   function updateSelectedStylesDisplay() {
